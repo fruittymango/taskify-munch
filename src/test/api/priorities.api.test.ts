@@ -1,37 +1,57 @@
-import {describe, test} from '@jest/globals';
+import {beforeAll, describe, expect, test} from '@jest/globals';
+import axios, { AxiosError } from 'axios';
+import humanId from 'human-id';
 
-// TODO: Manage task priorities
-// TODO: should add priority - schema invalid
-// TODO: should add priority - priority does exist
-// TODO: should add priority - priority does not exist
+describe('Manage ptiotities - api level', () => {
+  describe("unauthorised access of resource", ()=>{
+    test('should not get priorities - unauthorised user', async ()=>{
+      try {
+       await axios.get('http://127.0.0.1:5000/priorities');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(401);
+          expect(error.response?.data.message).toBe("User unauthorized! Login required.")        
+        }
+      }
+    })
+  })
 
-// TODO: should read priority - schema invalid
-// TODO: should read priority - priority does exist
-// TODO: should read priority - priority does not exist
+  describe("authorised access of resource", ()=>{
+    beforeAll(async()=>{
+      try{
+        const validBody = {
+          name:"Test"+humanId(),
+          surname:"Test"+humanId(),
+          email:humanId()+"@gmail.com", 
+          password: humanId()
+        };
+  
+        await axios.post("http://127.0.0.1:5000/user/register", {
+          ...validBody
+        }); 
 
-// TODO: should update priority - schema invalid
-// TODO: should update priority - priority does exist
-// TODO: should update priority - priority does not exist
+        const result = await axios.post("http://127.0.0.1:5000/user/login", {
+          email: validBody.email,
+          password: validBody.password,
+          
+        })
+        expect(result?.status).toBe(200);
+        expect(result?.data.token).toBeTruthy();
+        axios.defaults.headers.common['Authorization'] = `Bearer ${result.data.token}` 
+  
+      } catch (error: Error | AxiosError| any) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(400);
+          expect(error.response?.data.message).toBe("User profile exist already.");
+        }
+      }    
+    })
+    test('should get priorities',async()=>{
+      const result = await axios.get('http://127.0.0.1:5000/priorities');
+      expect(result.data.length).toBeGreaterThan(0);
+      expect(result.status).toBe(200);
+    })
+  })
 
-// TODO: should delete priority - schema invalid
-// TODO: should delete priority - priority does exist
-// TODO: should delete priority - priority does not exist
-
-describe('Manage priorities - controller level', () => {
-  test('should not get priorities - unauthorised user',()=>{})
-  test('should not get priorities - schema invalid',()=>{})
-  test('should get priorities - priorities do not exist',()=>{})
-  test('should get priorities - priorities do exist',()=>{})
-
-  test('should not add one priority - schema invalid',()=>{})
-  test('should add one priority - priority does not exist',()=>{})
-  test('should add one priority - priority does exist',()=>{})
-
-  test('should not update one priority - schema invalid',()=>{})
-  test('should update one priority - priority does not exist',()=>{})
-  test('should update one priority - priority does exist',()=>{})
-
-  test('should not remove one priority - schema invalid',()=>{})
-  test('should remove one priority - priority does not exist',()=>{})
-  test('should remove one priority - priority does exist',()=>{})
 })
+
