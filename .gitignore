@@ -62,3 +62,4 @@ build/
 .husky
 
 .env*
+*.js
