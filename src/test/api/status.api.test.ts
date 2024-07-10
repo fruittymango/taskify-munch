@@ -14,11 +14,11 @@ afterAll(async()=>{
   await stopServer()
 })
 
-describe('Manage ptiotities - api level', () => {
+describe('Manage statuses - api level', () => {
   describe("unauthorised access of resource", ()=>{
-    test('should not get priorities - unauthorised user', async ()=>{
+    test('should not get statuses - unauthorised user', async ()=>{
       try {
-       await axios.get('http://127.0.0.1:5000/priorities');
+       await axios.get('http://127.0.0.1:5000/statuses');
       } catch (error) {
         if (error instanceof AxiosError) {
           expect(error.response?.status).toBe(401);
@@ -37,7 +37,6 @@ describe('Manage ptiotities - api level', () => {
           email:humanId()+"@gmail.com", 
           password: humanId()
         };
-  
         await axios.post("http://127.0.0.1:5000/users/register", {
           ...validBody
         }); 
@@ -45,7 +44,6 @@ describe('Manage ptiotities - api level', () => {
         const result = await axios.post("http://127.0.0.1:5000/users/login", {
           email: validBody.email,
           password: validBody.password,
-          
         })
         expect(result?.status).toBe(200);
         expect(result?.data.token).toBeTruthy();
@@ -58,8 +56,8 @@ describe('Manage ptiotities - api level', () => {
         }
       }    
     })
-    test('should get priorities',async()=>{
-      const result = await axios.get('http://127.0.0.1:5000/priorities');
+    test('should get statuses',async()=>{
+      const result = await axios.get('http://127.0.0.1:5000/statuses');
       expect(result.data.length).toBeGreaterThan(0);
       expect(result.status).toBe(200);
     })

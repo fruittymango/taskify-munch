@@ -1,6 +1,18 @@
-import {beforeAll, describe, expect, test} from '@jest/globals';
-import axios, { AxiosError } from 'axios';
+import {afterAll, beforeAll, describe, expect, test} from '@jest/globals';
 import humanId from 'human-id';
+import axios, { AxiosError } from 'axios';
+
+import { startServer, stopServer } from '../../server';
+import { delay } from '../../utils/delay';
+
+beforeAll(async()=>{
+  await startServer();
+  await delay(2000);
+})
+
+afterAll(async()=>{
+  await stopServer()
+})
 
 describe('Manage labels - api level', () => {
   describe("unauthorised access of resource", ()=>{
@@ -10,7 +22,7 @@ describe('Manage labels - api level', () => {
       } catch (error) {
         if (error instanceof AxiosError) {
           expect(error.response?.status).toBe(401);
-          expect(error.response?.data.message).toBe("User unauthorized! Login required.")        
+          expect(error.response?.data.error).toBe("User unauthorized! Login required.")        
         }
       }
     })
@@ -26,11 +38,11 @@ describe('Manage labels - api level', () => {
           password: humanId()
         };
   
-        await axios.post("http://127.0.0.1:5000/user/register", {
+        await axios.post("http://127.0.0.1:5000/users/register", {
           ...validBody
         }); 
 
-        const result = await axios.post("http://127.0.0.1:5000/user/login", {
+        const result = await axios.post("http://127.0.0.1:5000/users/login", {
           email: validBody.email,
           password: validBody.password,
           
@@ -42,7 +54,7 @@ describe('Manage labels - api level', () => {
       } catch (error: Error | AxiosError| any) {
         if (error instanceof AxiosError) {
           expect(error.response?.status).toBe(400);
-          expect(error.response?.data.message).toBe("User profile exist already.");
+          expect(error.response?.data.error).toBe("User profile exist already.");
         }
       }    
     })
@@ -51,6 +63,31 @@ describe('Manage labels - api level', () => {
       expect(result.data.length).toBeGreaterThan(0);
       expect(result.status).toBe(200);
     })
+    test('should add label - label does not exist',async()=>{
+      const addLabelBody = {
+        title:humanId(),
+      };
+
+      const addLabelResult = await axios.post('http://127.0.0.1:5000/labels', {...addLabelBody},  );
+      expect(addLabelResult.status).toBe(200);
+      expect(addLabelResult.data.title).toBe(addLabelBody.title);
+    });
+    test('should not add label - api schema invalid',async()=>{
+    try {      
+      
+      const addLabelBody = {
+        Title:humanId(),
+      };
+
+      await axios.post('http://127.0.0.1:5000/labels', {...addLabelBody},  );
+  
+      } catch (error: Error | AxiosError| any) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(422);
+          expect(error.response?.data.error).toBe("Api schema validation failed. Please find taskify-much documentation!");
+        }
+      }
+    });
   })
 
 })
