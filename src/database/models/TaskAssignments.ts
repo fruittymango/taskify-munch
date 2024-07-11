@@ -1,7 +1,7 @@
 import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import User from './User.model';
-import Task from './Task.model';
+import User from './User';
+import Task from './Task';
 
 // Relates a task to the person who it is assigned to
 interface TaskAssignmentAttributes {
@@ -43,7 +43,7 @@ class TaskAssignment extends Model<TaskAssignmentAttributes, TaskAssignmentInput
   taskId!: number;
 
   @BelongsTo(()=>Task, "taskId")
-  task!:Task
+  tasks!:Task
 }
 
 export default TaskAssignment

@@ -1,13 +1,13 @@
 import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import Task from './Task.model';
-import User from './User.model';
+import Task from './Task';
+import User from './User';
 
 interface ProjectAttributes {
   id: number;
   guid: string;
   title: string;
-  description: string;
+  description?: string;
   userId: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -44,8 +44,6 @@ class Project extends Model<ProjectAttributes, ProjectInput>{
 
   @Column({
     type: DataType.TEXT,
-    allowNull: false,
-    unique: true
   })
   description!: string;
 
@@ -60,7 +58,7 @@ class Project extends Model<ProjectAttributes, ProjectInput>{
   user!: User;
 
   @HasMany(()=>Task, 'taskId')
-  task!:Task[]
+  tasks!:Task[]
 }
 
 export default Project

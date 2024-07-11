@@ -1,17 +1,20 @@
 import { HasOne, Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany } from 'sequelize-typescript';
-import User from './User.model';
-import Priority from './Priority.model';
-import Label from './Label.model';
-import Project from './Project.model';
-import TaskAssignment from './TaskAssignments.model';
-import CommentAssignment from './CommentAssignment.model';
+import User from './User';
+import Priority from './Priority';
+import Label from './Label';
+import Status from './Status';
+import Project from './Project';
+import TaskAssignment from './TaskAssignments';
+import CommentAssignment from './CommentAssignment';
+
 
 
 interface TaskAttributes {
   id: number;
   guid: string;
   title: string;
+  statusId?:string;
   dueDate?: Date;
   labelId: number;
   createdBy: number;
@@ -46,7 +49,7 @@ class Task extends Model<TaskAttributes, TaskInput> {
 
   @Column({
     type: DataType.TEXT,
-    unique: true
+    unique: true,
   })
   title!: string;
 
@@ -54,6 +57,12 @@ class Task extends Model<TaskAttributes, TaskInput> {
     type: DataType.DATE,
   })
   dueDate!: Date;
+
+  @ForeignKey(() => Status)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  statusId!: number;
 
   @ForeignKey(() => Project)
   @Column({
@@ -87,7 +96,7 @@ class Task extends Model<TaskAttributes, TaskInput> {
     type: DataType.TEXT,
   })
   description!: string;
-  // TODO: Figure out the relationships
+
   @BelongsTo(()=>Project, 'projectId')
   project!: Project
 

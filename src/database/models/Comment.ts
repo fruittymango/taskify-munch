@@ -1,6 +1,6 @@
 import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey} from 'sequelize-typescript';
-import User from './User.model';
+import User from './User';
 
 interface CommentAttributes {
   id: number;
@@ -46,7 +46,7 @@ class Comment extends Model<CommentAttributes, CommentInput> {
   
   // TODO: Figure out the relationships
   @HasMany(()=>User, 'userId')
-  user!: User[]
+  users!: User[]
 }
 
 export default Comment

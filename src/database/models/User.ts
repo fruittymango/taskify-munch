@@ -1,8 +1,8 @@
 import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany } from 'sequelize-typescript';
-import Task from './Task.model';
-import TaskAssignment from './TaskAssignments.model';
-import Project from './Project.model';
+import Task from './Task';
+import TaskAssignment from './TaskAssignments';
+import Project from './Project';
 
 interface UserAttributes {
   id: number;
@@ -34,33 +34,42 @@ class User extends Model<UserAttributes, UserInput>{
   @Column({
     type: DataType.UUID,
     allowNull: false,
-    unique: true
+    unique: true,
   })
   guid!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    validate: {
+      isAlpha: true,
+    },
   })
   name!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    validate: {
+      isAlpha: true,
+    },
   })
   surname!: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
+    validate: {
+      isEmail: true,
+    },
   })
   email!: string;
   
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
   })
   password!: string;
 
