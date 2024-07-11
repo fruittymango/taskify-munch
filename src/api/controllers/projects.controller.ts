@@ -1,22 +1,29 @@
-
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { v4 as uuidv4 } from 'uuid';
-import Project, { ProjectInput } from '../../database/models/Project';
-import User from '../../database/models/User';
-import { getAllProjectsByUserId, getProjectByGuid, createProject, updateProjectByGuid, deleteProjectByGuid } from '../services/project.service';
-import { GuidPathParam } from '../types/project.types';
-import unsanitize from '../../utils/unsanitize';
+import { FastifyRequest, FastifyReply } from "fastify";
+import { v4 as uuidv4 } from "uuid";
+import Project, { ProjectInput } from "../../database/models/Project";
+import User from "../../database/models/User";
+import {
+    getAllProjectsByUserId,
+    getProjectByGuid,
+    createProject,
+    updateProjectByGuid,
+    deleteProjectByGuid,
+} from "../services/project.service";
+import { GuidPathParam } from "../types/project.types";
+import unsanitize from "../../utils/unsanitize";
 
 export class ProjectsController {
     static async GetProjects(request: FastifyRequest, reply: FastifyReply) {
         const user: User = request.user as User;
-        const findProjects = (await getAllProjectsByUserId(user.id))?.map((value: Project) => {
-            return {
-                ...value.dataValues,
-                title: unsanitize(value.dataValues.title),
-                description: unsanitize(value.dataValues.description || ""),
+        const findProjects = (await getAllProjectsByUserId(user.id))?.map(
+            (value: Project) => {
+                return {
+                    ...value.dataValues,
+                    title: unsanitize(value.dataValues.title),
+                    description: unsanitize(value.dataValues.description || ""),
+                };
             }
-        });
+        );
         return reply.send(findProjects);
     }
 
@@ -33,7 +40,12 @@ export class ProjectsController {
     static async AddProject(request: FastifyRequest, reply: FastifyReply) {
         const user: User = request.user as User;
         const projectInput: ProjectInput = request.body as ProjectInput;
-        const addedProject = await createProject({ userId: user.id, guid: uuidv4(), title: projectInput.title, description: projectInput?.description });
+        const addedProject = await createProject({
+            userId: user.id,
+            guid: uuidv4(),
+            title: projectInput.title,
+            description: projectInput?.description,
+        });
         return reply.status(200).send({
             ...addedProject,
             title: unsanitize(addedProject.dataValues.title),
@@ -48,12 +60,14 @@ export class ProjectsController {
         return reply.send({
             ...updatedProjects,
             title: unsanitize(updatedProjects.dataValues.title),
-            description: unsanitize(updatedProjects.dataValues?.description || ""),
+            description: unsanitize(
+                updatedProjects.dataValues?.description || ""
+            ),
         });
     }
 
     static async DeleteProject(request: FastifyRequest, reply: FastifyReply) {
         const { guid } = (request as GuidPathParam).params;
-        await deleteProjectByGuid(guid)
+        await deleteProjectByGuid(guid);
     }
 }
