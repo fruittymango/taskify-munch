@@ -1,16 +1,18 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { TaskAssignmentInput } from "../../database/models/TaskAssignments";
 import { createTaskAssignments, deleteTaskAssignmentsByUserIdTaskId } from "../services/taskAssignment.service";
 import { GuidPathParam } from "../types/project.types";
 import { getTaskByGuid } from "../services/task.service";
 import { TaskAssigmentRequest } from "../types/task_assignments.types";
+import { getUserById } from "../services/user.service";
 
-export class TasAssignmentsController {
+export class TaskAssignmentsController {
     static async AddTaskAssignment(request:FastifyRequest, reply: FastifyReply) {
         const {userId} = (request as TaskAssigmentRequest).body;
         const { guid } = (request as GuidPathParam).params;
 
         const task = await getTaskByGuid(guid);
+
+        await getUserById(userId);
 
         const addedTaskAssignment = await createTaskAssignments({
             userId, 
@@ -23,6 +25,8 @@ export class TasAssignmentsController {
         const { guid } = (request as GuidPathParam).params;
 
         const task = await getTaskByGuid(guid);
+
+        await getUserById(userId);
 
         const deletedTaskAssignment = await deleteTaskAssignmentsByUserIdTaskId(
             userId, 
