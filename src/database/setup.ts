@@ -15,7 +15,7 @@ const sequelizeConnection = new Sequelize({
   password: dbPassword,
   storage: dbUrl,
   dialect: dbDriver,
-  models: [__dirname + '/models/*.model.ts'],
+  models: [__dirname + '/models/'],
   logging:false
 });
 
