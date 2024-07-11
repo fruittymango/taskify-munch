@@ -12,7 +12,7 @@ import fastify, {setUpRateLimiter} from './app';
 
 async function initializeDB() {
   await sequelizeConnection.authenticate();
-  await sequelizeConnection.sync({ force: true });
+  await sequelizeConnection.sync();
 
   await addBulkLabels(taskConstants.labels)
   await addBulkPriorities(taskConstants.priorities)
