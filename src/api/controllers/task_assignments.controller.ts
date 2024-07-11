@@ -6,8 +6,8 @@ import { TaskAssigmentRequest } from "../types/task_assignments.types";
 import { getUserById } from "../services/user.service";
 
 export class TaskAssignmentsController {
-    static async AddTaskAssignment(request:FastifyRequest, reply: FastifyReply) {
-        const {userId} = (request as TaskAssigmentRequest).body;
+    static async AddTaskAssignment(request: FastifyRequest, reply: FastifyReply) {
+        const { userId } = (request as TaskAssigmentRequest).body;
         const { guid } = (request as GuidPathParam).params;
 
         const task = await getTaskByGuid(guid);
@@ -15,13 +15,13 @@ export class TaskAssignmentsController {
         await getUserById(userId);
 
         const addedTaskAssignment = await createTaskAssignments({
-            userId, 
+            userId,
             taskId: task.id
         });
-        return reply.status(200).send(addedTaskAssignment); 
+        return reply.status(200).send(addedTaskAssignment);
     }
-    static async DeleteTaskAssignment(request:FastifyRequest, reply: FastifyReply) {
-        const {userId} = (request as TaskAssigmentRequest).body;
+    static async DeleteTaskAssignment(request: FastifyRequest, reply: FastifyReply) {
+        const { userId } = (request as TaskAssigmentRequest).body;
         const { guid } = (request as GuidPathParam).params;
 
         const task = await getTaskByGuid(guid);
@@ -29,7 +29,7 @@ export class TaskAssignmentsController {
         await getUserById(userId);
 
         const deletedTaskAssignment = await deleteTaskAssignmentsByUserIdTaskId(
-            userId, 
+            userId,
             task.id
         );
         return reply.status(200).send(deletedTaskAssignment);

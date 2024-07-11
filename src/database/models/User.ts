@@ -1,4 +1,4 @@
-import { Optional} from 'sequelize';
+import { Optional } from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 import Task from './Task';
 import TaskAssignment from './TaskAssignments';
@@ -16,16 +16,16 @@ interface UserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export interface UserInput extends Optional<UserAttributes, 'id'> {}
-export interface UserOuput extends Required<UserAttributes> {}
+export interface UserInput extends Optional<UserAttributes, 'id'> { }
+export interface UserOuput extends Required<UserAttributes> { }
 
 @Table({
   timestamps: true,
   tableName: 'users',
   paranoid: true
 })
-class User extends Model<UserAttributes, UserInput>{
-  @Column ({
+class User extends Model<UserAttributes, UserInput> {
+  @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -66,7 +66,7 @@ class User extends Model<UserAttributes, UserInput>{
     },
   })
   email!: string;
-  
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -77,7 +77,7 @@ class User extends Model<UserAttributes, UserInput>{
   @HasMany(() => Project)
   projects!: Project;
 
-  @BelongsToMany(()=>Task, ()=>TaskAssignment)
+  @BelongsToMany(() => Task, () => TaskAssignment)
   tasks!: Task[]
 
   @BeforeCreate

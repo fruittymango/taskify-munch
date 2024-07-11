@@ -1,4 +1,4 @@
-import { Optional} from 'sequelize';
+import { Optional } from 'sequelize';
 import sanitizeHtml from 'sanitize-html';
 
 import { Model, Table, Column, DataType, HasMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
@@ -10,15 +10,15 @@ interface PriorityAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export interface PriorityInput extends Optional<PriorityAttributes, 'id'> {}
-export interface PriorityOuput extends Required<PriorityAttributes> {}
+export interface PriorityInput extends Optional<PriorityAttributes, 'id'> { }
+export interface PriorityOuput extends Required<PriorityAttributes> { }
 
 @Table({
   timestamps: true,
   tableName: 'priorities',
   paranoid: true
 })
-class Priority extends Model<PriorityAttributes, PriorityInput>{
+class Priority extends Model<PriorityAttributes, PriorityInput> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,

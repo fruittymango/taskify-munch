@@ -4,8 +4,8 @@ import unsanitize from "../../utils/unsanitize";
 import Status from "../../database/models/Status";
 
 export class StatusesController {
-    static async GetStatuses(request:FastifyRequest, reply: FastifyReply) {
-        const allStatuses = (await getAllStatuses())?.map((value:Status)=>{
+    static async GetStatuses(request: FastifyRequest, reply: FastifyReply) {
+        const allStatuses = (await getAllStatuses())?.map((value: Status) => {
             return {
                 ...value.dataValues,
                 title: unsanitize(value.dataValues.title),

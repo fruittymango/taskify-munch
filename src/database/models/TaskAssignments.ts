@@ -1,4 +1,4 @@
-import { Optional} from 'sequelize';
+import { Optional } from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import User from './User';
 import Task from './Task';
@@ -10,13 +10,13 @@ interface TaskAssignmentAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export interface TaskAssignmentInput extends Optional<TaskAssignmentAttributes, 'id'> {}
-export interface TaskAssignmentOutput extends Required<TaskAssignmentAttributes> {}
+export interface TaskAssignmentInput extends Optional<TaskAssignmentAttributes, 'id'> { }
+export interface TaskAssignmentOutput extends Required<TaskAssignmentAttributes> { }
 
 @Table({
   timestamps: true,
   tableName: 'task_assignments',
-  paranoid: true 
+  paranoid: true
 })
 class TaskAssignment extends Model<TaskAssignmentAttributes, TaskAssignmentInput> {
   @Column({
@@ -40,8 +40,8 @@ class TaskAssignment extends Model<TaskAssignmentAttributes, TaskAssignmentInput
   })
   taskId!: number;
 
-  @BelongsTo(()=>Task, "taskId")
-  tasks!:Task
+  @BelongsTo(() => Task, "taskId")
+  tasks!: Task
 }
 
 export default TaskAssignment

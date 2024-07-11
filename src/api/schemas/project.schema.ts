@@ -25,7 +25,7 @@ export const UpdateProjectSchema = {
   params: {
     type: 'object',
     properties: {
-      guid: { type: 'string' , format:'uuid'}
+      guid: { type: 'string', format: 'uuid' }
     },
     required: ['guid']
   },
@@ -53,7 +53,7 @@ export const ProjectGuidParamSchema = {
     type: 'object',
     required: ['guid'],
     properties: {
-      guid: { type: 'string' , format:'uuid'}
+      guid: { type: 'string', format: 'uuid' }
     },
   }
 }

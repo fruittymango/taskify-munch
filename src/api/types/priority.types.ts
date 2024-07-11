@@ -7,13 +7,13 @@ export type GetPriorityRequest = FastifyRequest<{
 export type UpdatePriorityRequest = FastifyRequest<{
     Querystring: { guid: string };
     Body: {
-        title?:string;
+        title?: string;
     }
 }>;
 
 export type AddPriorityRequest = FastifyRequest<{
     Querystring: { guid: string };
-    Body:{
-        title:string;
+    Body: {
+        title: string;
     }
 }>;

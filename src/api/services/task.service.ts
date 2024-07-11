@@ -10,7 +10,7 @@ export const createTask = async (payload: TaskInput): Promise<Task> => {
 }
 
 export const updateTask = async (id: number, payload: Partial<TaskInput>): Promise<Task> => {
-    const task = await Task.findByPk(id, {paranoid:false})
+    const task = await Task.findByPk(id, { paranoid: false })
     if (!task) {
         throw new NotFoundError('Task not found')
     }
@@ -18,7 +18,7 @@ export const updateTask = async (id: number, payload: Partial<TaskInput>): Promi
 }
 
 export const updateTaskByGuid = async (guid: string, payload: Partial<TaskInput>): Promise<Task> => {
-    const task = await Task.findOne({where:{guid}, paranoid:false})
+    const task = await Task.findOne({ where: { guid }, paranoid: false })
     if (!task) {
         throw new NotFoundError('Task not found')
     }
@@ -28,7 +28,7 @@ export const updateTaskByGuid = async (guid: string, payload: Partial<TaskInput>
 
 export const deleteTaskByGuid = async (guid: string): Promise<boolean> => {
     const deletedTaskCount = await Task.destroy({
-        where: {guid},
+        where: { guid },
     })
     if (!deletedTaskCount) {
         throw new NotFoundError('Task not found')
@@ -36,15 +36,15 @@ export const deleteTaskByGuid = async (guid: string): Promise<boolean> => {
     return !!deletedTaskCount
 }
 
-export const getTasksByProjectGuid = async (projectGuid:string): Promise<Task[]> => {
+export const getTasksByProjectGuid = async (projectGuid: string): Promise<Task[]> => {
 
     const result = await Task.findAll({
-        where:{
-            '$project.guid$':projectGuid,
+        where: {
+            '$project.guid$': projectGuid,
         },
-        paranoid:false,
+        paranoid: false,
         attributes: ['id', 'guid', 'projectId', 'dueDate', 'createdBy', 'statusId', 'title', 'description'],
-        include:[{model: Project, as: 'project',}, {model: TaskAssignment, as: 'task_assignments',}]
+        include: [{ model: Project, as: 'project', }, { model: TaskAssignment, as: 'task_assignments', }]
     })
     if (!result) {
         throw new NotFoundError("Tasks not found")
@@ -53,15 +53,15 @@ export const getTasksByProjectGuid = async (projectGuid:string): Promise<Task[]>
 
 }
 
-export const getTaskByGuid = async (taskGuid:string): Promise<Task> => {
-    
+export const getTaskByGuid = async (taskGuid: string): Promise<Task> => {
+
     const result = await Task.findOne({
-        where:{
-            guid:taskGuid,
+        where: {
+            guid: taskGuid,
         },
-        paranoid:false,
-        include:[
-            {model: TaskAssignment, as: 'task_assignments'},
+        paranoid: false,
+        include: [
+            { model: TaskAssignment, as: 'task_assignments' },
             // {model: CommentAssignment, as: 'comment_assignments'},
         ]
     })

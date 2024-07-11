@@ -16,7 +16,7 @@ const sequelizeConnection = new Sequelize({
   storage: dbUrl,
   dialect: dbDriver,
   models: [__dirname + '/models/'],
-  logging:false
+  logging: false
 });
 
 export default sequelizeConnection;

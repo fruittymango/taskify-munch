@@ -6,7 +6,7 @@ export const createProject = async (payload: ProjectInput): Promise<Project> => 
     try {
         const project = await Project.create(payload)
         return project
-        
+
     } catch (error) {
         if (error instanceof UniqueConstraintError) {
             throw new BadRequestError('Project with the same title exist.')
@@ -17,7 +17,7 @@ export const createProject = async (payload: ProjectInput): Promise<Project> => 
 }
 
 export const updateProjectByGuid = async (guid: string, payload: Partial<ProjectInput>): Promise<Project> => {
-    const project = await Project.findOne({where:{guid}})
+    const project = await Project.findOne({ where: { guid } })
     if (!project) {
         throw new BadRequestError('Project not found')
     }
@@ -28,7 +28,7 @@ export const updateProjectByGuid = async (guid: string, payload: Partial<Project
 export const deleteProjectByGuid = async (guid: string): Promise<void> => {
     const result = await Project.findOne({
         where: {
-            guid: {[Op.eq]: guid}
+            guid: { [Op.eq]: guid }
         },
     })
     if (!result) {
@@ -37,10 +37,10 @@ export const deleteProjectByGuid = async (guid: string): Promise<void> => {
     return await result.destroy();
 }
 
-export const getProjectByGuid = async (projectGuid:string): Promise<Project> => {
+export const getProjectByGuid = async (projectGuid: string): Promise<Project> => {
     const result = await Project.findOne({
         where: {
-            guid: {[Op.eq]: projectGuid}
+            guid: { [Op.eq]: projectGuid }
         },
     })
     if (!result) {
@@ -49,10 +49,10 @@ export const getProjectByGuid = async (projectGuid:string): Promise<Project> => 
     return result;
 }
 
-export const getAllProjectsByUserId = async (id:number): Promise<Project[]> => {
+export const getAllProjectsByUserId = async (id: number): Promise<Project[]> => {
     return await Project.findAll({
         where: {
-            userId: {[Op.eq]: id}
+            userId: { [Op.eq]: id }
         },
     })
 }

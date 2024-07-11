@@ -1,10 +1,10 @@
 import { FastifyRequest } from "fastify/types/request";
 
 export type TaskAssigmentRequest = FastifyRequest<{
-    Params:{
+    Params: {
         guid: string;
     },
-    Body:{
-        userId:number;
+    Body: {
+        userId: number;
     }
 }>;

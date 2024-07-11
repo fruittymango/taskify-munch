@@ -17,23 +17,23 @@ declare module 'fastify' {
   interface FastifyRequest {
     startTime: number;
   }
-  
-  interface FastifyInstance extends 
-    FastifyJwtNamespace<{namespace: 'security'}> {
+
+  interface FastifyInstance extends
+    FastifyJwtNamespace<{ namespace: 'security' }> {
   }
 }
 
 const fastify = Fastify(fastifyOptions);
-fastify.register(fastifyJwt, {secret:JWTSECRET, });
+fastify.register(fastifyJwt, { secret: JWTSECRET, });
 fastify.register(userRoutes, { prefix: '/users' });
 fastify.register(labelsRoutes, { prefix: '/labels' });
 fastify.register(projectsRoutes, { prefix: '/projects' });
-fastify.register(prioritiesRoutes, { prefix: '/priorities'});
+fastify.register(prioritiesRoutes, { prefix: '/priorities' });
 fastify.register(statusesRoutes, { prefix: '/statuses' });
 fastify.register(tasksRoutes, { prefix: '/tasks' });
 fastify.register(taskAssignRoutes, { prefix: '/assign/task' });
 
-export const setUpRateLimiter = async () =>{
+export const setUpRateLimiter = async () => {
   await fastify.register(import("@fastify/rate-limit"), {
     max: 100,
     timeWindow: "1 minute",
@@ -55,7 +55,7 @@ fastify.setErrorHandler(function (error, request, reply) {
   if (error instanceof BadRequestError) {
     reply.log.warn(error.message);
     return reply.status(error.statusCode!).send({ error: error.message });
-  } 
+  }
   else if (error.statusCode === 422 || error.validation || error instanceof ValidationError) {
     reply.log.warn(error.message);
     return reply.status(422).send({ error: 'Api schema validation failed. Please find taskify-much documentation!' });
@@ -63,11 +63,11 @@ fastify.setErrorHandler(function (error, request, reply) {
   else if (error.statusCode === 401 || error instanceof AuthError) {
     reply.log.warn(error.message);
     return reply.send({ error: error.message });
-  } 
+  }
   else if (error.statusCode === 404 || error instanceof NotFoundError) {
     reply.log.warn(error.message);
     return reply.status(error.statusCode!).send({ error: error.message });
-  } 
+  }
   else if (error.statusCode === 500 || error instanceof InternalServerError) {
     reply.log.error(error.message);
     return reply.status(error.statusCode!).send({ error: 'Cannot process request right now.' });
@@ -75,7 +75,7 @@ fastify.setErrorHandler(function (error, request, reply) {
   else if (error.statusCode === 429 || error instanceof RateLimtError) {
     reply.log.warn(error.message);
     return reply.send({ error: "You hit the rate limit. Slow down please!" });
-  } 
+  }
   else {
     console.log(error)
     reply.log.error(error);
@@ -87,11 +87,11 @@ fastify.setNotFoundHandler(
   function (request, reply) {
     reply.code(404).send();
   }
-);  
+);
 
 fastify.addHook("onRequest", (request, reply, done) => {
   request.startTime = Date.now();
-   request.log.info(
+  request.log.info(
     `[Incoming] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
   );
   done();
@@ -99,10 +99,8 @@ fastify.addHook("onRequest", (request, reply, done) => {
 
 fastify.addHook("onResponse", (request, reply, done) => {
   request.log.info(
-    `[Outgoing] ${request.id} method=${request.raw.method}, url=${
-      request.raw.url
-    }, ip=${request.ip} status=${reply.statusCode}, duration=${
-      Date.now() - request.startTime
+    `[Outgoing] ${request.id} method=${request.raw.method}, url=${request.raw.url
+    }, ip=${request.ip} status=${reply.statusCode}, duration=${Date.now() - request.startTime
     }ms`
   );
   done();

@@ -1,4 +1,4 @@
-import Label, {LabelInput} from '../../database/models/Label';
+import Label, { LabelInput } from '../../database/models/Label';
 
 export const createLabel = async (payload: LabelInput): Promise<Label> => {
     const label = await Label.create(payload)

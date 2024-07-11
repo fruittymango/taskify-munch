@@ -1,4 +1,4 @@
-import { Optional} from 'sequelize';
+import { Optional } from 'sequelize';
 import { Model, Table, Column, DataType } from 'sequelize-typescript';
 
 interface StatusAttributes {
@@ -8,14 +8,14 @@ interface StatusAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export interface StatusInput extends Optional<StatusAttributes, 'id'> {}
-export interface StatusOutput extends Required<StatusAttributes> {}
+export interface StatusInput extends Optional<StatusAttributes, 'id'> { }
+export interface StatusOutput extends Required<StatusAttributes> { }
 
 @Table({
   timestamps: true,
   tableName: 'statuses'
 })
-class Status extends Model<StatusAttributes, StatusInput>  {
+class Status extends Model<StatusAttributes, StatusInput> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,

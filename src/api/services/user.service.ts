@@ -17,8 +17,8 @@ export const createUser = async (payload: UserInput): Promise<User> => {
 
 export const getUserByEmail = async (userEmail: string): Promise<User> => {
     const user = await User.findOne({
-        where:{
-            email:{[Op.eq]:userEmail}
+        where: {
+            email: { [Op.eq]: userEmail }
         }
     })
     if (!user) {
@@ -36,7 +36,7 @@ export const getUserById = async (id: number): Promise<User> => {
 }
 
 export const getAllUsers = async (): Promise<User[]> => {
-    return User.findAll({paranoid:false})
+    return User.findAll({ paranoid: false })
 }
 
 export const addBulkUsers = async (payload: UserInput[]): Promise<User[]> => {

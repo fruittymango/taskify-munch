@@ -1,4 +1,4 @@
-import { Optional} from 'sequelize';
+import { Optional } from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 import User from './User';
 import Priority from './Priority';
@@ -12,7 +12,7 @@ interface TaskAttributes {
   id: number;
   guid: string;
   title: string;
-  statusId?:number;
+  statusId?: number;
   dueDate?: Date;
   labelId: number;
   createdBy: number;
@@ -23,8 +23,8 @@ interface TaskAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-export interface TaskInput extends Optional<TaskAttributes, 'id'> {}
-export interface TaskOuput extends Required<TaskAttributes> {}
+export interface TaskInput extends Optional<TaskAttributes, 'id'> { }
+export interface TaskOuput extends Required<TaskAttributes> { }
 
 @Table({
   timestamps: true,
@@ -32,7 +32,7 @@ export interface TaskOuput extends Required<TaskAttributes> {}
   paranoid: true
 })
 class Task extends Model<TaskAttributes, TaskInput> {
-  @Column ({
+  @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -95,20 +95,20 @@ class Task extends Model<TaskAttributes, TaskInput> {
   })
   description!: string;
 
-  @BelongsTo(()=>Project, 'projectId')
+  @BelongsTo(() => Project, 'projectId')
   project!: Project
 
-  @HasMany(()=>User, 'userId')
+  @HasMany(() => User, 'userId')
   user!: User[]
 
-  @HasMany(()=>TaskAssignment)
-  task_assignments!: TaskAssignment[] 
+  @HasMany(() => TaskAssignment)
+  task_assignments!: TaskAssignment[]
 
   @BeforeCreate
   @BeforeUpdate
   static sanitizeData(instance: TaskAttributes) {
     instance.title = sanitizeHtml(instance.title.trim());
-    if(instance.description){
+    if (instance.description) {
       instance.description = sanitizeHtml(instance.description.trim());
     }
   }

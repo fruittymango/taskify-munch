@@ -1,4 +1,4 @@
-import Status, {StatusInput} from '../../database/models/Status';
+import Status, { StatusInput } from '../../database/models/Status';
 import { NotFoundError } from '../../helpers/errors';
 
 export const getAllStatuses = async (): Promise<Status[]> => {

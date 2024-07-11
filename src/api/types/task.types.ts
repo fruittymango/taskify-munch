@@ -11,8 +11,8 @@ export type GetTasksRequest = FastifyRequest<{
 export type UpdateTaskRequest = FastifyRequest<{
     Querystring: { guid: string };
     Body: {
-        title?:string;
-        description?:string;
+        title?: string;
+        description?: string;
         dueDate?: Date;
         labelId?: number;
         projectId?: number;
@@ -22,9 +22,9 @@ export type UpdateTaskRequest = FastifyRequest<{
 
 export type AddTaskRequest = FastifyRequest<{
     Querystring: { guid: string };
-    Body:{
-        title:string;
-        description:string;
+    Body: {
+        title: string;
+        description: string;
         dueDate: Date;
         labelId: number;
         projectId: number;

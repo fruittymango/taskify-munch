@@ -14,7 +14,7 @@ export const RegisterUserSchema = {
       type: 'object',
       properties: {
         guid: { type: 'string' },
-        name: { type: 'string', minLength: 3},
+        name: { type: 'string', minLength: 3 },
         surname: { type: 'string', minLength: 3 },
         email: { type: 'string', format: 'email' },
       }

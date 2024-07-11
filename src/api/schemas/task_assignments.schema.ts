@@ -3,7 +3,7 @@ export const TaskIdUserIdBodySchema = {
     type: 'object',
     required: ['guid'],
     properties: {
-      guid: { type: 'string', format:'uuid' },
+      guid: { type: 'string', format: 'uuid' },
     }
   },
   body: {
@@ -20,7 +20,7 @@ export const TaskAssignmentSchema = {
     type: 'object',
     required: ['guid'],
     properties: {
-      guid: { type: 'string', format:'uuid' },
+      guid: { type: 'string', format: 'uuid' },
     }
   },
   body: {
