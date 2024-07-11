@@ -153,9 +153,11 @@ describe('Manage users', () => {
           password: humanId()
         };
   
-        await axios.post("http://127.0.0.1:5000/users/register", {
+        const registerResult = await axios.post("http://127.0.0.1:5000/users/register", {
           ...validBody
-        }); 
+        });
+        expect(registerResult?.status).toBe(200);
+        expect(registerResult?.data).toBeTruthy();
 
         const result = await axios.post("http://127.0.0.1:5000/users/login", {
           email: validBody.email,
@@ -168,6 +170,7 @@ describe('Manage users', () => {
   
       } catch (error: Error | AxiosError| any) {
         if (error instanceof AxiosError) {
+          console.log(error)
           expect(error.response?.status).toBe(400);
           expect(error.response?.data.error).toBe("User profile exist already.");
         }

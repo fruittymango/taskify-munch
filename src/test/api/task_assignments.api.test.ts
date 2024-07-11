@@ -89,7 +89,7 @@ describe('Manage tasks assignments', () => {
         const addTaskBody = {
           title:humanId(),
           description: uuidv4(),
-          dueDate: futureDate.toISOString().split(' ')[0],
+          dueDate: futureDate.toISOString().split('T')[0],
           labelId: labels.data[0].id,
           projectId: projects.data[0].id,
           priorityId: priorities.data[0].id,
@@ -124,26 +124,28 @@ describe('Manage tasks assignments', () => {
       expect(result.data.task_assignments.length).toBe(0);
     })
 
-    test('should not add task assignment - schema invalid', async ()=>{
-      try {
-        await axios.post('http://127.0.0.1:5000/assign/task/'+uuidv4(), {userd:1});
-       } catch (error) {
-         if (error instanceof AxiosError) {
-           expect(error.response?.status).toBe(422);
-           expect(error.response?.data.error).toBe("Api schema validation failed. Please find taskify-much documentation!")        
+    describe("adding task assignment", ()=>{
+      test('should not add task assignment - schema invalid', async ()=>{
+        try {
+          await axios.post('http://127.0.0.1:5000/assign/task/'+uuidv4(), {userd:1});
+         } catch (error) {
+           if (error instanceof AxiosError) {
+             expect(error.response?.status).toBe(422);
+             expect(error.response?.data.error).toBe("Api schema validation failed. Please find taskify-much documentation!")        
+           }
          }
-       }
-    })
-    
-    test('should add one task assignment - task does not exist', async ()=>{
-      try {
-        await axios.post('http://127.0.0.1:5000/assign/task/'+uuidv4(), {userId: 1});
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          expect(error.response?.status).toBe(404);
-          expect(error.response?.data.error).toBe("Task not found")        
+      })
+      
+      test('should not add one task assignment - task does not exist', async ()=>{
+        try {
+          await axios.post('http://127.0.0.1:5000/assign/task/'+uuidv4(), {userId: 1});
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            expect(error.response?.status).toBe(404);
+            expect(error.response?.data.error).toBe("Task not found")        
+          }
         }
-      }
+      })
     })
 
     test('should get tasks with assignments - array not empty', async ()=>{
@@ -157,10 +159,10 @@ describe('Manage tasks assignments', () => {
       expect(tasks.data[0].task_assignments.length).toBe(0);
 
       const assignTaskBody = {userId:1};
-      const addTasAssignmentResult = await axios.post('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {...assignTaskBody},  );
+      const addTaskAssignmentResult = await axios.post('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {...assignTaskBody},  );
 
-      expect(addTasAssignmentResult.status).toBe(200);
-      expect(addTasAssignmentResult.data.userId).toBe(addTasAssignmentResult.data.userId);
+      expect(addTaskAssignmentResult.status).toBe(200);
+      expect(addTaskAssignmentResult.data.userId).toBe(addTaskAssignmentResult.data.userId);
       
       const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);        
       expect(tasks2.status).toBe(200);
@@ -168,47 +170,50 @@ describe('Manage tasks assignments', () => {
       expect(tasks2.data[0].task_assignments.length).toBeGreaterThan(0);      
     }) 
 
-    test('should not remove one task assignment - user does not exist', async ()=>{
-      const projects = await axios.get('http://127.0.0.1:5000/projects');
-      expect(projects.status).toBe(200);
-      expect(projects.data.length).toBeGreaterThan(0);
-
-      const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
-      expect(tasks.status).toBe(200);
-      expect(tasks.data.length).toBeGreaterThan(0);
-      expect(tasks.data[0].task_assignments.length).toBe(1);
-
-      const assignTaskBody = {userId:10};
-      const deleteTaskAssignmentResult = await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
-
-      expect(deleteTaskAssignmentResult.status).toBe(200);
-      expect(deleteTaskAssignmentResult.data.userId).toBe(deleteTaskAssignmentResult.data.userId);
-      
-      const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);  
-      expect(tasks2.status).toBe(200);
-      expect(tasks2.data.length).toBeGreaterThan(0);
-      expect(tasks2.data[0].task_assignments.length).toBe(tasks.data[0].task_assignments.length);  
+    describe("removing task assignments", ()=>{
+      test('should not remove one task assignment - user does not exist', async ()=>{
+        const projects = await axios.get('http://127.0.0.1:5000/projects');
+        expect(projects.status).toBe(200);
+        expect(projects.data.length).toBeGreaterThan(0);
+  
+        const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
+        expect(tasks.status).toBe(200);
+        expect(tasks.data.length).toBeGreaterThan(0);
+        expect(tasks.data[0].task_assignments.length).toBe(1);
+  
+        const assignTaskBody = {userId:10};
+        const deleteTaskAssignmentResult = await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
+  
+        expect(deleteTaskAssignmentResult.status).toBe(200);
+        expect(deleteTaskAssignmentResult.data.userId).toBe(deleteTaskAssignmentResult.data.userId);
+        
+        const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);  
+        expect(tasks2.status).toBe(200);
+        expect(tasks2.data.length).toBeGreaterThan(0);
+        expect(tasks2.data[0].task_assignments.length).toBe(tasks.data[0].task_assignments.length);  
+      })
+      test('should remove one task assignment - task does exist', async ()=>{
+        const projects = await axios.get('http://127.0.0.1:5000/projects');
+        expect(projects.status).toBe(200);
+        expect(projects.data.length).toBeGreaterThan(0);
+  
+        const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
+        expect(tasks.status).toBe(200);
+        expect(tasks.data.length).toBeGreaterThan(0);
+        expect(tasks.data[0].task_assignments.length).toBe(1);
+  
+        const assignTaskBody = {userId:1};
+        const deleteTaskAssignmentResult = await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
+  
+        expect(deleteTaskAssignmentResult.status).toBe(200);
+        expect(deleteTaskAssignmentResult.data.userId).toBe(deleteTaskAssignmentResult.data.userId);
+        
+        const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);  
+        expect(tasks2.status).toBe(200);
+        expect(tasks2.data.length).toBeGreaterThan(0);
+        expect(tasks2.data[0].task_assignments.length).toBeLessThan(tasks.data[0].task_assignments.length);      
+      })
     })
-    test('should remove one task assignment - task does exist', async ()=>{
-      const projects = await axios.get('http://127.0.0.1:5000/projects');
-      expect(projects.status).toBe(200);
-      expect(projects.data.length).toBeGreaterThan(0);
 
-      const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
-      expect(tasks.status).toBe(200);
-      expect(tasks.data.length).toBeGreaterThan(0);
-      expect(tasks.data[0].task_assignments.length).toBe(1);
-
-      const assignTaskBody = {userId:1};
-      const deleteTaskAssignmentResult = await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
-
-      expect(deleteTaskAssignmentResult.status).toBe(200);
-      expect(deleteTaskAssignmentResult.data.userId).toBe(deleteTaskAssignmentResult.data.userId);
-      
-      const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);  
-      expect(tasks2.status).toBe(200);
-      expect(tasks2.data.length).toBeGreaterThan(0);
-      expect(tasks2.data[0].task_assignments.length).toBeLessThan(tasks.data[0].task_assignments.length);      
-    })
   })
 })
