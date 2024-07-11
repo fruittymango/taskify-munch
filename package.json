@@ -7,11 +7,12 @@
     "build": "tsc -w",
     "start:dev": "nodemon build/server.js",
     "start:build": "node build/server.js | pino-pretty",
-    "test": "jest",
+    "test": "jest  --runInBand --verbose",
     "test:dev": "jest --verbose --watchAll --coverage",
-    "test:verbose": "jest --verbose",
-    "test:coverage": "jest --coverage",
-    "test:verbose:coverage": "jest --verbose --coverage"
+    "test:dev:unit": "jest --verbose --watchAll --coverage ./src/test/units/",
+    "test:dev:api": "jest --verbose --watchAll --coverage ./src/test/api/",
+    "test:api": "jest --runInBand --verbose ./src/test/api/*",
+    "test:unit": "jest --runInBand --verbose ./src/test/units/*"
   },
   "repository": {
     "type": "git",
