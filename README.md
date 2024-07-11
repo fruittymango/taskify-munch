@@ -46,36 +46,36 @@ To start the build server, use:
 npm run start:build
 ```
 
-## Running Test\
+## Running Test
 
-To run tests, use:
+To run all tests
 
 ```bash
 npm run test
 ```
 
-To run tests with coverage, use:
+To run and watch all test tests
 
 ```bash
-npm run test:coverage
+npm run test:dev:unit
 ```
 
-To run tests with the coverage, verbose and watchAll flag, use:
+To run and watch all test tests:
 
 ```bash
-npm run test:dev
+npm run test:dev:api
 ```
 
-To run tests with verbose flag, use:
+To run all integration tests:
 
 ```bash
-npm run test:verbose
+npm run test:api
 ```
 
-To run tests with the verbose and coverage flag, use:
+To run all unit tests:
 
 ```bash
-npm run test:verbose:coverage
+npm run test:unit
 ```
 
 ## Docker Setup
@@ -102,7 +102,7 @@ To start the services, use:
 docker-compose up
 ```
 
-To run tests with Docker Compose, use:
+To start and run test in an isolated service, use:
 
 ```bash
 docker-compose run test
