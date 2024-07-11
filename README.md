@@ -82,25 +82,25 @@ npm run test:unit
 
 To run the application using Docker, follow these steps:
 
-# 1.Build the Docker image:
+# 1.Build the Docker image
 
 ```bash
 docker build -t taskify-munch:latest .
 ```
 
-# 2. Run the Docker container:
+# 2. Run the Docker container
 
 ```bash
 docker run -p 5050:5050 --env-file .env.development taskify-munch-app:latest
 ```
 
-# 3. Run the Docker container with tests:
+# 3. Run the Docker container with tests
 
 ```bash
 docker run --env-file .env.test taskify-munch-app:latest npm run test
 ```
 
-# 4. Run the Docker container in interactive mode:
+# 4. Run the Docker container in interactive mode
 
 ```bash
 docker run -p 5050:5050 --env-file .env.development -i -t taskify-munch:latest sh
@@ -109,18 +109,20 @@ docker run -p 5050:5050 --env-file .env.development -i -t taskify-munch:latest s
 ## Important!
 
 Ensure you have on of the three .env files at the least, name:
-.env.production
-.env.development
-.env.test
+
+- .env.production
+- .env.development
+- .env.test
 
 With the following variables:
-PORT=
-NODE_ENV=
-DB_NAME=
-DB_USERNAME=
-DB_PASSWORD=
-DB_URL=
-JWT_SECRET=
+
+- PORT=
+- NODE_ENV=
+- DB_NAME=
+- DB_USERNAME=
+- DB_PASSWORD=
+- DB_URL=
+- JWT_SECRET=
 
 ## Contributing
 
