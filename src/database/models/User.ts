@@ -1,8 +1,9 @@
 import { Optional} from 'sequelize';
-import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 import Task from './Task';
 import TaskAssignment from './TaskAssignments';
 import Project from './Project';
+import sanitizeHtml from 'sanitize-html';
 
 interface UserAttributes {
   id: number;
@@ -79,7 +80,11 @@ class User extends Model<UserAttributes, UserInput>{
   @BelongsToMany(()=>Task, ()=>TaskAssignment)
   tasks!: Task[]
 
-  // @BelongsToMany(()=>Comment, ()=>CommentAssignment)
-  // comments!: Comment[]
+  @BeforeCreate
+  @BeforeUpdate
+  static sanitizeData(instance: UserAttributes) {
+    instance.name = sanitizeHtml(instance.name.trim());
+    instance.surname = sanitizeHtml(instance.surname.trim());
+  }
 }
-export default User
+export default User;

@@ -1,14 +1,12 @@
-import { HasOne, Optional} from 'sequelize';
-import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany } from 'sequelize-typescript';
+import { Optional} from 'sequelize';
+import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BelongsToMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 import User from './User';
 import Priority from './Priority';
 import Label from './Label';
 import Status from './Status';
 import Project from './Project';
 import TaskAssignment from './TaskAssignments';
-import CommentAssignment from './CommentAssignment';
-
-
+import sanitizeHtml from 'sanitize-html';
 
 interface TaskAttributes {
   id: number;
@@ -106,8 +104,14 @@ class Task extends Model<TaskAttributes, TaskInput> {
   @HasMany(()=>TaskAssignment)
   task_assignments!: TaskAssignment[] 
 
-  @HasMany(()=>CommentAssignment)
-  comment_assignments!: CommentAssignment[] 
+  @BeforeCreate
+  @BeforeUpdate
+  static sanitizeData(instance: TaskAttributes) {
+    instance.title = sanitizeHtml(instance.title.trim());
+    if(instance.description){
+      instance.description = sanitizeHtml(instance.description.trim());
+    }
+  }
 }
 
 export default Task

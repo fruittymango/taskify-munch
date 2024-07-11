@@ -1,7 +1,7 @@
 import { Optional} from 'sequelize';
-import { Model, Table, Column, DataType } from 'sequelize-typescript';
+import sanitizeHtml from 'sanitize-html';
+import { Model, Table, Column, DataType, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 
-// Relates a label to the task it is assigned to
 interface LabelAttributes {
   id: number;
   title: string;
@@ -30,6 +30,12 @@ class Label extends Model<LabelAttributes, LabelInput>  {
     unique: true
   })
   title!: string;
+
+  @BeforeCreate
+  @BeforeUpdate
+  static sanitizeData(instance: LabelAttributes) {
+    instance.title = sanitizeHtml(instance.title.trim());
+  }
 }
 
 export default Label;

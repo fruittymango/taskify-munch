@@ -1,5 +1,7 @@
 import { Optional} from 'sequelize';
-import { Model, Table, Column, DataType, HasMany } from 'sequelize-typescript';
+import sanitizeHtml from 'sanitize-html';
+
+import { Model, Table, Column, DataType, HasMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
 
 interface PriorityAttributes {
   id: number;
@@ -30,6 +32,12 @@ class Priority extends Model<PriorityAttributes, PriorityInput>{
     unique: true
   })
   title!: string;
+
+  @BeforeCreate
+  @BeforeUpdate
+  static sanitizeData(instance: PriorityAttributes) {
+    instance.title = sanitizeHtml(instance.title.trim());
+  }
 }
 
 export default Priority

@@ -1,7 +1,6 @@
 import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType } from 'sequelize-typescript';
 
-// Relates a label to the task it is assigned to
 interface StatusAttributes {
   id: number;
   title: string;

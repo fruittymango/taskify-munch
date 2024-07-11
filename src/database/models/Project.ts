@@ -1,7 +1,8 @@
 import { Optional} from 'sequelize';
-import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo, BeforeUpdate, BeforeCreate } from 'sequelize-typescript';
 import Task from './Task';
 import User from './User';
+import sanitizeHtml from 'sanitize-html';
 
 interface ProjectAttributes {
   id: number;
@@ -59,6 +60,15 @@ class Project extends Model<ProjectAttributes, ProjectInput>{
 
   @HasMany(()=>Task, 'taskId')
   tasks!:Task[]
+
+  @BeforeCreate
+  @BeforeUpdate
+  static sanitizeData(instance: ProjectAttributes) {
+    instance.title = sanitizeHtml(instance.title.trim());
+    if (instance.description) {
+      instance.description = sanitizeHtml(instance.description.trim());
+    }
+  }
 }
 
 export default Project

@@ -2,8 +2,6 @@ import { Optional} from 'sequelize';
 import { Model, Table, Column, DataType, HasMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import User from './User';
 import Task from './Task';
-
-// Relates a task to the person who it is assigned to
 interface TaskAssignmentAttributes {
   id: number;
   userId: number;
@@ -18,7 +16,7 @@ export interface TaskAssignmentOutput extends Required<TaskAssignmentAttributes>
 @Table({
   timestamps: true,
   tableName: 'task_assignments',
-  paranoid: true // for card history
+  paranoid: true 
 })
 class TaskAssignment extends Model<TaskAssignmentAttributes, TaskAssignmentInput> {
   @Column({
