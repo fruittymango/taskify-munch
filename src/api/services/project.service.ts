@@ -56,3 +56,7 @@ export const getAllProjectsByUserId = async (id:number): Promise<Project[]> => {
         },
     })
 }
+
+export const addBulkProjects = async (payload: ProjectInput[]): Promise<ProjectInput[]> => {
+    return await Project.bulkCreate(payload);
+}
