@@ -1,25 +1,132 @@
-import {describe, test} from '@jest/globals';
+import {beforeAll, describe, expect, jest, test} from '@jest/globals';
+import sequelizeConnection from '../../database/setup';
+import {UserController} from '../../api/controllers/users.controller'
+import '../../helpers/loadEnv';
+import humanId from 'human-id';
 
-// TODO: Manage Users
-// TODO: should get users - users does exist
-// TODO: should get users - users does not exist
-// TODO: should add user - does not exist
-// TODO: should add user - does exist
-// TODO: should get user - does exit exist
-// TODO: should get user - does not exist
-// TODO: should update user - does exist
-// TODO: should update user - does not exist
-// TODO: should delete user - does exist
-// TODO: should delete user - does not exist  
-describe('Manage users - controller level', () => {
-  test('should get users - users does not exist',()=>{})
-  test('should get users - users does exist',()=>{})
-  test('should add users - users does not exist',()=>{})
-  test('should add users - users does exist',()=>{})
-  test('should get user - user does exist',()=>{})
-  test('should get user - users does not exist',()=>{})
-  test('should update user - users does not exist',()=>{})
-  test('should update user - users does exist',()=>{})
-  test('should delete user - users does exist',()=>{})
-  test('should get user - users does not exist',()=>{})
+beforeAll(async ()=>{
+  await sequelizeConnection.sync({force:true})
+});
+
+const body = {name:humanId(), surname:humanId(), password: humanId(), email:humanId()+"@gmail.com" };
+
+describe('Manage users - controller level',  () => {
+  test('should get users - users do not exist', async ()=>{
+    let mockRequest: Partial<any> = {};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    await UserController.GetUsers(mockRequest as any, mockReply as any);
+    expect(mockReply.send).toHaveBeenCalledWith([]);
+
+  })
+  test('should register user - users does not exist',async()=>{
+    let mockRequest: Partial<any> = {body:{...body}};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    await UserController.RegisterUser(mockRequest as any, mockReply as any);
+    const dataCalledWith = mockReply.send.mock.calls[0][0];
+    expect(mockReply.send).toHaveBeenCalledTimes(1);
+    expect(mockReply.status).toHaveBeenCalledWith(200);
+    expect(dataCalledWith.name).toBe(body.name);
+    expect(dataCalledWith.surname).toBe(body.surname);
+    expect(dataCalledWith.email).toBe(body.email);    
+  })
+
+  test('should register user - users does exist',async ()=>{
+    let mockRequest: Partial<any> = {body:{...body}};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    try {
+      await UserController.RegisterUser(mockRequest as any, mockReply as any);
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toBe("User profile exist already.");
+        expect(error.name).toBe("BadRequestError");
+      }
+    }
+
+  })
+
+  test('should get users - users do exist', async ()=>{
+    let mockRequest: Partial<any> = {};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    await UserController.GetUsers(mockRequest as any, mockReply as any);
+    const dataCalledWith = mockReply.send.mock.calls[0][0][0];
+    expect(mockReply.send).toHaveBeenCalledTimes(1);
+    expect(dataCalledWith.name).toBe(body.name);
+    expect(dataCalledWith.surname).toBe(body.surname);
+    expect(dataCalledWith.email).toBe(body.email);
+    expect(dataCalledWith.password).toBeTruthy();
+
+
+  })
+
+  test('should not log in user - user exist does not exist', async ()=>{
+    let mockRequest: Partial<any> = {body:{email:humanId()+"@gmail.com", password:body.password}};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    let mockFastify:Partial<any> = {
+      jwt: {sign:{send: jest.fn()}}
+    };
+    try {
+      await UserController.LoginUser(mockRequest as any, mockReply as any, mockFastify as any);
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toBe("User email not found");
+        expect(error.name).toBe("NotFoundError");
+      }
+    }
+
+  })
+
+  test('should log in user - incorrect password', async ()=>{
+    let mockRequest: Partial<any> = {body:{email:body.email, password:humanId()}};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    let mockFastify:Partial<any> = {
+      jwt: {sign: jest.fn()}
+    };
+    try {
+      await UserController.LoginUser(mockRequest as any, mockReply as any, mockFastify as any);
+    } catch (error) {
+      if (error instanceof Error) {
+        expect(error.message).toBe("Invalid password.");
+        expect(error.name).toBe("AuthError");
+      }
+    }
+
+  })
+
+  test('should log in user - user exist', async ()=>{
+    let mockRequest: Partial<any> = {body:{email:body.email, password:body.password}};
+    let mockReply: Partial<any> = {
+      status: jest.fn().mockReturnThis(),
+      statusCode: jest.fn(),
+      send: jest.fn()
+    };
+    let mockFastify:Partial<any> = {
+      jwt: {sign: jest.fn()}
+    };
+    await UserController.LoginUser(mockRequest as any, mockReply as any, mockFastify as any);
+    expect(mockFastify.jwt.sign).toHaveBeenCalledTimes(1);
+  })
 })
