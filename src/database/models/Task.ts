@@ -12,7 +12,7 @@ interface TaskAttributes {
   id: number;
   guid: string;
   title: string;
-  statusId?:string;
+  statusId?:number;
   dueDate?: Date;
   labelId: number;
   createdBy: number;
