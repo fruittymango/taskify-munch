@@ -21,7 +21,6 @@ async function initializeDB() {
 }
 
 export async function startServer(){
-  await setUpRateLimiter();
   await initializeDB();
   
   fastify.listen(

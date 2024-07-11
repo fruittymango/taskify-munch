@@ -84,15 +84,9 @@ fastify.setErrorHandler(function (error, request, reply) {
 });
 
 fastify.setNotFoundHandler(
-    {
-        preHandler: fastify.rateLimit({
-        max: 50,
-        timeWindow: '1 minute',
-        }),
-    },
-    function (request, reply) {
-        reply.code(404).send();
-    }
+  function (request, reply) {
+    reply.code(404).send();
+  }
 );  
 
 fastify.addHook("onRequest", (request, reply, done) => {
