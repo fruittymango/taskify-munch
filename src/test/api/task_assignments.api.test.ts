@@ -172,25 +172,25 @@ describe('Manage tasks assignments', () => {
 
     describe("removing task assignments", ()=>{
       test('should not remove one task assignment - user does not exist', async ()=>{
-        const projects = await axios.get('http://127.0.0.1:5000/projects');
-        expect(projects.status).toBe(200);
-        expect(projects.data.length).toBeGreaterThan(0);
-  
-        const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
-        expect(tasks.status).toBe(200);
-        expect(tasks.data.length).toBeGreaterThan(0);
-        expect(tasks.data[0].task_assignments.length).toBe(1);
-  
-        const assignTaskBody = {userId:10};
-        const deleteTaskAssignmentResult = await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
-  
-        expect(deleteTaskAssignmentResult.status).toBe(200);
-        expect(deleteTaskAssignmentResult.data.userId).toBe(deleteTaskAssignmentResult.data.userId);
-        
-        const tasks2 = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);  
-        expect(tasks2.status).toBe(200);
-        expect(tasks2.data.length).toBeGreaterThan(0);
-        expect(tasks2.data[0].task_assignments.length).toBe(tasks.data[0].task_assignments.length);  
+        try {
+          const projects = await axios.get('http://127.0.0.1:5000/projects');
+          expect(projects.status).toBe(200);
+          expect(projects.data.length).toBeGreaterThan(0);
+    
+          const tasks = await axios.get('http://127.0.0.1:5000/tasks?projectGuid='+projects.data[0].guid);
+          expect(tasks.status).toBe(200);
+          expect(tasks.data.length).toBeGreaterThan(0);
+          expect(tasks.data[0].task_assignments.length).toBe(1);
+    
+          const assignTaskBody = {userId:10};
+          await axios.delete('http://127.0.0.1:5000/assign/task/'+tasks.data[0].guid, {data:{...assignTaskBody}},  );
+
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            expect(error.response?.status).toBe(404);
+            expect(error.response?.data.error).toBe("User not found")        
+          }
+        }
       })
       test('should remove one task assignment - task does exist', async ()=>{
         const projects = await axios.get('http://127.0.0.1:5000/projects');

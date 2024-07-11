@@ -121,6 +121,7 @@ With the following variables:
 - DB_NAME=
 - DB_USERNAME=
 - DB_PASSWORD=
+- DB_DIALECT=
 - DB_URL=
 - JWT_SECRET=
 
