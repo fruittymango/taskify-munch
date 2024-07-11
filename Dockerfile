@@ -1,15 +1,13 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /usr/src/
 
-COPY package*.json ./
-
-RUN ["npm", "install"]
+RUN apk update && apk add sqlite
 
 COPY . .
 
+RUN ["npm", "install"]
+
 EXPOSE ${PORT}
 
-CMD [ "npm", "run", "build" ]
-
-CMD [ "npm", "run", "start:build" ]
+CMD [ "npm", "run", "start" ]

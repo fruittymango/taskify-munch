@@ -34,16 +34,16 @@ npm install -g typescript
 
 ## Usage
 
-To start the development server, use:
-
-```bash
-npm run start:dev
-```
-
 To start the build server, use:
 
 ```bash
-npm run start:build
+npm run start
+```
+
+To start the development server, use:
+
+```bash
+npm run dev
 ```
 
 ## Running Test
@@ -85,28 +85,42 @@ To run the application using Docker, follow these steps:
 # 1.Build the Docker image:
 
 ```bash
-docker build -t taskify-munch .
+docker build -t taskify-munch:latest .
 ```
 
 # 2. Run the Docker container:
 
 ```bash
-docker run -p 3000:3000 taskify-munch
+docker run -p 5050:5050 --env-file .env.development taskify-munch-app:latest
 ```
 
-## [Optional] Docker Compose
-
-To start the services, use:
+# 3. Run the Docker container with tests:
 
 ```bash
-docker-compose up
+docker run --env-file .env.test taskify-munch-app:latest npm run test
 ```
 
-To start and run test in an isolated service, use:
+# 4. Run the Docker container in interactive mode:
 
 ```bash
-docker-compose run test
+docker run -p 5050:5050 --env-file .env.development -i -t taskify-munch:latest sh
 ```
+
+## Important!
+
+Ensure you have on of the three .env files at the least, name:
+.env.production
+.env.development
+.env.test
+
+With the following variables:
+PORT=
+NODE_ENV=
+DB_NAME=
+DB_USERNAME=
+DB_PASSWORD=
+DB_URL=
+JWT_SECRET=
 
 ## Contributing
 

@@ -4,13 +4,12 @@
   "description": "A task management system intended to streamline and automate tasks for members of teams at munch.",
   "main": "./src/server.js",
   "scripts": {
-    "build": "tsc -w",
-    "start:dev": "nodemon build/server.js",
-    "start:build": "node build/server.js | pino-pretty",
+    "start":"ts-node ./src/server.ts",
+    "dev": "nodemon build/server.js",
     "test": "jest  --runInBand --verbose",
     "test:dev": "jest --verbose --watchAll --coverage",
     "test:dev:unit": "jest --verbose --watchAll --coverage ./src/test/units/",
-    "test:dev:api": "jest --verbose --watchAll --coverage ./src/test/api/",
+    "test:dev:api": "jest --verbose --watchAll ./src/test/api/",
     "test:api": "jest --runInBand --verbose ./src/test/api/*",
     "test:unit": "jest --runInBand --verbose ./src/test/units/*"
   },
