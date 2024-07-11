@@ -27,6 +27,14 @@ export const getUserByEmail = async (userEmail: string): Promise<User> => {
     return user
 }
 
+export const getUserById = async (id: number): Promise<User> => {
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+    return user
+}
+
 export const getAllUsers = async (): Promise<User[]> => {
     return User.findAll({paranoid:false})
 }
