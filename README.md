@@ -4,12 +4,12 @@ A simple task management application built with Node.js and TypeScript.
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- [Running Tests](#running-tests)
-- [Docker Setup](#docker-setup)
-- [Contributing](#contributing)
-- [License](#license)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Running Tests](#running-tests)
+-   [Docker Setup](#docker-setup)
+-   [Contributing](#contributing)
+-   [License](#license)
 
 ## Installation
 
@@ -54,13 +54,13 @@ To run all tests
 npm run test
 ```
 
-To run and watch all test tests
+To run and watch all unit tests
 
 ```bash
 npm run test:dev:unit
 ```
 
-To run and watch all test tests:
+To run and watch all integration tests:
 
 ```bash
 npm run test:dev:api
@@ -110,20 +110,20 @@ docker run -p 5050:5050 --env-file .env.development -i -t taskify-munch:latest s
 
 Ensure you have on of the three .env files at the least, name:
 
-- .env.production
-- .env.development
-- .env.test
+-   .env.production
+-   .env.development
+-   .env.test
 
 With the following variables:
 
-- PORT=
-- NODE_ENV=
-- DB_NAME=
-- DB_USERNAME=
-- DB_PASSWORD=
-- DB_DIALECT=
-- DB_URL=
-- JWT_SECRET=
+-   PORT=
+-   NODE_ENV=
+-   DB_NAME=
+-   DB_USERNAME=
+-   DB_PASSWORD=
+-   DB_DIALECT=
+-   DB_URL=
+-   JWT_SECRET=
 
 ## Contributing
 
