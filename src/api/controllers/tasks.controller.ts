@@ -2,23 +2,64 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { StatusInput } from "../../database/models/Status";
 import Task, { TaskInput } from "../../database/models/Task";
 import User from "../../database/models/User";
-import { v4 as uuidv4 } from 'uuid';
-import { getTasksByProjectGuid, getTaskByGuid, createTask, updateTaskByGuid, deleteTaskByGuid } from "../services/task.service";
+import { v4 as uuidv4 } from "uuid";
+import {
+    getTaskByGuid,
+    createTask,
+    updateTaskByGuid,
+    deleteTaskByGuid,
+    getTasksByProjectGuidSortedFilter,
+} from "../services/task.service";
 import { GetTasksRequest } from "../types/task.types";
 import { GuidPathParam } from "../types/project.types";
 import unsanitize from "../../utils/unsanitize";
+import { findStatusByTitle } from "../services/statuses.service";
+import sanitize from "sanitize-html";
+import { OrderItem } from "sequelize";
+
+type filterByType = {
+    statusId: number;
+};
 
 export class TaskController {
     static async GetTasks(request: FastifyRequest, reply: FastifyReply) {
-        const { query: { projectGuid } }: GetTasksRequest = request as GetTasksRequest;
-        const projectTasks = (await getTasksByProjectGuid(projectGuid))?.map((value: Task) => {
+        const {
+            query: { projectGuid, sort, ascending, status },
+        }: GetTasksRequest = request as GetTasksRequest;
+
+        let filterBy: filterByType = {} as filterByType;
+
+        // Prepare filtering
+        if (status) {
+            const statusResult = await findStatusByTitle(
+                sanitize(status.toLowerCase().trim())
+            );
+            filterBy.statusId = statusResult.id;
+        }
+
+        // Prepare sorting
+        const normalisedSort: string = sanitize(sort.toLowerCase().trim());
+        const allowedFilteringOptions: { [key: string]: string } = {
+            duedate: "dueDate",
+            priority: "priorityId",
+        };
+        let projectTasks: Task[] = await getTasksByProjectGuidSortedFilter(
+            projectGuid,
+            filterBy,
+            [
+                allowedFilteringOptions[normalisedSort],
+                ascending ? "ASC" : "DESC",
+            ] as OrderItem
+        );
+
+        const unsanitizedTasks = projectTasks?.map((value: Task) => {
             return {
                 ...value.dataValues,
                 title: unsanitize(value.dataValues.title),
                 description: unsanitize(value.dataValues.description || ""),
-            }
+            };
         });
-        return reply.status(200).send(projectTasks);
+        return reply.status(200).send(unsanitizedTasks);
     }
 
     static async GetTask(request: FastifyRequest, reply: FastifyReply) {
@@ -37,7 +78,7 @@ export class TaskController {
         const addedTasks = await createTask({
             guid: uuidv4(),
             createdBy: user.id,
-            dueDate: new Date(taskInput?.dueDate!),
+            dueDate: taskInput?.dueDate,
             title: taskInput.title,
             labelId: taskInput.labelId,
             projectId: taskInput.projectId,
@@ -54,8 +95,12 @@ export class TaskController {
 
     static async UpdateTask(request: FastifyRequest, reply: FastifyReply) {
         const { guid } = (request as GuidPathParam).params;
+        console.log({ guid });
         const payload: TaskInput = request.body as TaskInput;
-        const updatedTask = await updateTaskByGuid(guid, { ...payload, dueDate: new Date(payload?.dueDate!), });
+        const updatedTask = await updateTaskByGuid(guid, {
+            ...payload,
+            dueDate: payload?.dueDate!,
+        });
         return reply.status(200).send(updatedTask);
     }
 
@@ -73,6 +118,8 @@ export class TaskController {
     static async DeleteTask(request: FastifyRequest, reply: FastifyReply) {
         const { guid } = (request as GuidPathParam).params;
         await deleteTaskByGuid(guid);
-        return reply.status(200).send({ message: "Task does not exist anymore." });
+        return reply
+            .status(200)
+            .send({ message: "Task does not exist anymore." });
     }
 }
