@@ -58,7 +58,6 @@ fastify.setErrorHandler(function (
 ) {
     const logMessage = `\n${error.stack}`;
     if (
-        error.statusCode == 401 ||
         error instanceof ValidationError ||
         error instanceof BadRequestError ||
         error instanceof DatabaseRelatedError ||
@@ -68,6 +67,11 @@ fastify.setErrorHandler(function (
     ) {
         reply.log.warn(logMessage);
         return reply.status(error.statusCode!).send({ error: error.message });
+    } else if (error.statusCode == 401) {
+        reply.log.warn(error.message);
+        return reply.status(401).send({
+            error: "User unauthorized! Login required.",
+        });
     } else if (error.code === "FST_ERR_VALIDATION") {
         reply.log.warn(error.message);
         return reply.status(422).send({
