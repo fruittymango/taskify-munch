@@ -69,5 +69,6 @@ export class ProjectsController {
     static async DeleteProject(request: FastifyRequest, reply: FastifyReply) {
         const { guid } = (request as GuidPathParam).params;
         await deleteProjectByGuid(guid);
+        reply.send({ message: "Project deleted" });
     }
 }
