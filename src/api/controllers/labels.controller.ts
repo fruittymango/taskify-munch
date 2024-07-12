@@ -1,8 +1,7 @@
-
-import { FastifyRequest, FastifyReply } from 'fastify';
-import Label, { LabelInput } from '../../database/models/Label';
-import { getAllLabels, createLabel } from '../services/label.service';
-import unsanitize from '../../utils/unsanitize';
+import { FastifyRequest, FastifyReply } from "fastify";
+import Label, { LabelInput } from "../../database/models/Label";
+import { getAllLabels, createLabel } from "../services/label.service";
+import unsanitize from "../../utils/unsanitize";
 
 export class LabelsController {
     static async GetLabels(request: FastifyRequest, reply: FastifyReply) {
@@ -10,7 +9,7 @@ export class LabelsController {
             return {
                 ...value.dataValues,
                 title: unsanitize(value.dataValues.title),
-            }
+            };
         });
         return reply.status(200).send(allLabels);
     }
@@ -20,6 +19,8 @@ export class LabelsController {
         const addedLabels = await createLabel({
             title: labelInput.title,
         });
-        return reply.status(200).send({ ...addedLabels, title: unsanitize(addedLabels.title) });
+        return reply
+            .status(200)
+            .send({ ...addedLabels, title: unsanitize(addedLabels.title) });
     }
 }

@@ -9,7 +9,7 @@ export class StatusesController {
             return {
                 ...value.dataValues,
                 title: unsanitize(value.dataValues.title),
-            }
+            };
         });
         return reply.status(200).send(allStatuses);
     }
