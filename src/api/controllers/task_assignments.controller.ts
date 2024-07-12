@@ -15,7 +15,6 @@ export class TaskAssignmentsController {
     ) {
         const { userId } = (request as TaskAssigmentRequest).body;
         const { guid } = (request as GuidPathParam).params;
-
         const task = await getTaskByGuid(guid);
 
         await getUserById(userId);

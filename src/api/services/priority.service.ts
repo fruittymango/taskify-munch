@@ -11,7 +11,6 @@ export const getAllPriorities = async (): Promise<Priority[]> => {
 
 export const findPriorityByTitle = async (title: string): Promise<Priority> => {
     try {
-        console.log(title);
         const priority = await Priority.findOne({ where: { title } });
         if (!priority) {
             throw new NotFoundError("Priority not found");

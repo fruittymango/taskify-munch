@@ -40,6 +40,7 @@ async function getTasksHelper(
         query: { projectGuid, sort, ascending, status },
     }: GetTasksRequest = request as GetTasksRequest;
 
+    // Prepare filtering
     let filterBy: filterByType = {
         "$project.guid$": projectGuid,
     } as filterByType;
@@ -48,7 +49,6 @@ async function getTasksHelper(
         filterBy["$task_assignments.userId$"] = (request.user as User).id;
     }
 
-    // Prepare filtering
     if (status) {
         const statusResult = await findStatusByTitle(
             sanitize(status.toLowerCase().trim())
@@ -156,7 +156,6 @@ export class TaskController {
      */
     static async UpdateTask(request: FastifyRequest, reply: FastifyReply) {
         const { guid } = (request as GuidPathParam).params;
-        console.log({ guid });
         const payload: TaskInput = request.body as TaskInput;
         const updatedTask = await updateTaskByGuid(guid, {
             ...payload,
