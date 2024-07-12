@@ -70,6 +70,11 @@ describe("Manage tasks assignments", () => {
                     ...validBody,
                 });
 
+                await axios.post("http://127.0.0.1:5000/users/register", {
+                    ...validBody,
+                    email: humanId() + validBody.email,
+                });
+
                 const result = await axios.post(
                     "http://127.0.0.1:5000/users/login",
                     {
@@ -226,6 +231,72 @@ describe("Manage tasks assignments", () => {
             );
             expect(tasks2.status).toBe(200);
             expect(tasks2.data.length).toBeGreaterThan(0);
+            expect(tasks2.data[0].task_assignments.length).toBe(1);
+        });
+
+        test("should not get tasks assigned to you - array empty", async () => {
+            const projects = await axios.get("http://127.0.0.1:5000/projects");
+            expect(projects.status).toBe(200);
+            expect(projects.data.length).toBeGreaterThan(0);
+
+            const tasks = await axios.get(
+                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                    projects.data[0].guid
+            );
+            expect(tasks.status).toBe(200);
+            expect(tasks.data.length).toBeGreaterThan(0);
+            expect(tasks.data[0].task_assignments.length).toBe(1);
+
+            const assignTaskBody = { userId: 2 };
+            const addTaskAssignmentResult = await axios.post(
+                "http://127.0.0.1:5000/assign/task/" + tasks.data[0].guid,
+                { ...assignTaskBody }
+            );
+
+            expect(addTaskAssignmentResult.status).toBe(200);
+            expect(addTaskAssignmentResult.data.userId).toBe(
+                addTaskAssignmentResult.data.userId
+            );
+
+            const tasks2 = await axios.get(
+                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                    projects.data[0].guid
+            );
+            expect(tasks2.status).toBe(200);
+            expect(tasks2.data.length).toBeGreaterThan(0);
+            expect(tasks2.data[0].task_assignments.length).toBe(1);
+        });
+
+        test("should get tasks assigned to you - array not empty", async () => {
+            const projects = await axios.get("http://127.0.0.1:5000/projects");
+            expect(projects.status).toBe(200);
+            expect(projects.data.length).toBeGreaterThan(0);
+
+            const tasks = await axios.get(
+                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                    projects.data[0].guid
+            );
+            expect(tasks.status).toBe(200);
+            expect(tasks.data.length).toBeGreaterThan(0);
+            expect(tasks.data[0].task_assignments.length).toBe(1);
+
+            const assignTaskBody = { userId: 1 };
+            const addTaskAssignmentResult = await axios.post(
+                "http://127.0.0.1:5000/assign/task/" + tasks.data[0].guid,
+                { ...assignTaskBody }
+            );
+
+            expect(addTaskAssignmentResult.status).toBe(200);
+            expect(addTaskAssignmentResult.data.userId).toBe(
+                addTaskAssignmentResult.data.userId
+            );
+
+            const tasks2 = await axios.get(
+                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                    projects.data[0].guid
+            );
+            expect(tasks2.status).toBe(200);
+            expect(tasks2.data.length).toBeGreaterThan(0);
             expect(tasks2.data[0].task_assignments.length).toBeGreaterThan(0);
         });
 
@@ -274,7 +345,7 @@ describe("Manage tasks assignments", () => {
                 );
                 expect(tasks.status).toBe(200);
                 expect(tasks.data.length).toBeGreaterThan(0);
-                expect(tasks.data[0].task_assignments.length).toBe(1);
+                expect(tasks.data[0].task_assignments.length).toBe(2);
 
                 const assignTaskBody = { userId: 1 };
                 const deleteTaskAssignmentResult = await axios.delete(
