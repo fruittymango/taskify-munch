@@ -4,9 +4,15 @@ import "./helpers/loadEnv";
 import sequelizeConnection from "./database/setup";
 import taskConstants from "./database/constants";
 
-import { addBulkPriorities } from "./api/services/priority.service";
-import { addBulkLabels } from "./api/services/label.service";
-import { addBulkStatuses } from "./api/services/statuses.service";
+import {
+    addBulkPriorities,
+    getAllPriorities,
+} from "./api/services/priority.service";
+import { addBulkLabels, getAllLabels } from "./api/services/label.service";
+import {
+    addBulkStatuses,
+    getAllStatuses,
+} from "./api/services/statuses.service";
 
 import fastify, { setUpRateLimiter } from "./app";
 
@@ -14,9 +20,15 @@ async function initializeDB() {
     await sequelizeConnection.authenticate();
     await sequelizeConnection.sync();
 
-    await addBulkLabels(taskConstants.labels);
-    await addBulkPriorities(taskConstants.priorities);
-    await addBulkStatuses(taskConstants.statuses);
+    const labelsExist = (await getAllLabels())?.length > 0;
+    if (!labelsExist) await addBulkLabels(taskConstants.labels);
+
+    const prioritiesExist = (await getAllPriorities())?.length > 0;
+    if (!prioritiesExist) await addBulkPriorities(taskConstants.priorities);
+
+    const statusesExist = (await getAllStatuses())?.length > 0;
+    if (!statusesExist) await addBulkStatuses(taskConstants.statuses);
+
     fastify.log.info("Database connected..");
 }
 
