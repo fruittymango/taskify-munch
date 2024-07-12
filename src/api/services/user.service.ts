@@ -1,44 +1,56 @@
-import { Op, UniqueConstraintError } from 'sequelize';
-import User, { UserInput } from '../../database/models/User';
-import { BadRequestError, NotFoundError } from '../../helpers/errors';
+import { Op } from "sequelize";
+import User, { UserInput } from "../../database/models/User";
+import { DatabaseRelatedError, NotFoundError } from "../../helpers/errors";
 
 export const createUser = async (payload: UserInput): Promise<User> => {
     try {
-        const user = await User.create(payload)
-        return user
+        const user = await User.create(payload);
+        return user;
     } catch (error) {
-        if (error instanceof UniqueConstraintError) {
-            throw new BadRequestError('User profile exist already.')
-        } else {
-            throw new BadRequestError('Failed to save new user details.')
-        }
+        throw new DatabaseRelatedError("Failed to save new user.");
     }
-}
+};
 
 export const getUserByEmail = async (userEmail: string): Promise<User> => {
-    const user = await User.findOne({
-        where: {
-            email: { [Op.eq]: userEmail }
+    try {
+        const user = await User.findOne({
+            where: {
+                email: { [Op.eq]: userEmail },
+            },
+        });
+        if (!user) {
+            throw new NotFoundError("User email not found");
         }
-    })
-    if (!user) {
-        throw new NotFoundError('User email not found')
+        return user;
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to get user by email.");
     }
-    return user
-}
+};
 
 export const getUserById = async (id: number): Promise<User> => {
-    const user = await User.findByPk(id);
-    if (!user) {
-        throw new NotFoundError('User not found')
+    try {
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+        return user;
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to get user by id.");
     }
-    return user
-}
+};
 
 export const getAllUsers = async (): Promise<User[]> => {
-    return User.findAll({ paranoid: false })
-}
+    try {
+        return User.findAll({ paranoid: false });
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to get available users.");
+    }
+};
 
 export const addBulkUsers = async (payload: UserInput[]): Promise<User[]> => {
-    return await User.bulkCreate(payload);
-}
+    try {
+        return await User.bulkCreate(payload);
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to add bulk users.");
+    }
+};

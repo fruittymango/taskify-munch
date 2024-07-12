@@ -1,15 +1,30 @@
-import Label, { LabelInput } from '../../database/models/Label';
+import Label, { LabelInput } from "../../database/models/Label";
+import { DatabaseRelatedError } from "../../helpers/errors";
 
 export const createLabel = async (payload: LabelInput): Promise<Label> => {
-    const label = await Label.create(payload)
-    return label
-}
+    try {
+        const label = await Label.create(payload);
+        return label;
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to add label.");
+    }
+};
 
 export const getAllLabels = async (): Promise<Label[]> => {
-    return Label.findAll();
-}
+    try {
+        return Label.findAll();
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to available labels.");
+    }
+};
 
-export const addBulkLabels = async (payload: LabelInput[]): Promise<Label[]> => {
-    const labels = await Label.bulkCreate(payload)
-    return labels
-} 
+export const addBulkLabels = async (
+    payload: LabelInput[]
+): Promise<Label[]> => {
+    try {
+        const labels = await Label.bulkCreate(payload);
+        return labels;
+    } catch (error) {
+        throw new DatabaseRelatedError("Failed to add bulk labels.");
+    }
+};
