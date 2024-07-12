@@ -1,9 +1,5 @@
 export default {
-    priorities: [
-        { title: "Low" },
-        { title: "Medium" },
-        { title: "High" },
-    ],
+    priorities: [{ title: "low" }, { title: "medium" }, { title: "high" }],
     labels: [
         { title: "Bug" },
         { title: "Awaiting Approval" },
@@ -15,10 +11,10 @@ export default {
         { title: "UI" },
     ],
     statuses: [
-        { title: "Todo" },
-        { title: "Open" },
-        { title: "Completed" },
-        { title: "Backlog" },
-        { title: "Testing" },
-    ]
-}
+        { title: "todo" },
+        { title: "open" },
+        { title: "closed" },
+        { title: "backlog" },
+        { title: "testing" },
+    ],
+};
