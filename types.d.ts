@@ -1,15 +1,19 @@
-import 'fastify';
-import { FastifyJwtNamespace } from '@fastify/jwt';
-import User from './src/database/models/User';
+import "fastify";
+import { FastifyJwtNamespace } from "@fastify/jwt";
+import { FastifyRequest } from "fastify/types/request";
+import User from "./src/database/models/User";
 
-declare module 'fastify' {
-  interface FastifyRequest {
+type UserRequest = {
     user?: User;
     startTime: number;
-  }
-  
-  interface FastifyInstance extends 
-    FastifyJwtNamespace<{namespace: 'security'}> {
-  }
-}
+};
 
+declare module "fastify/types/request" {
+    interface FastifyRequest extends UserRequest<> {}
+}
+declare module "fastify" {
+    interface FastifyRequest extends UserRequest<> {}
+
+    interface FastifyInstance
+        extends FastifyJwtNamespace<{ namespace: "security" }> {}
+}
