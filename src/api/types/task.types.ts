@@ -5,7 +5,12 @@ export type GetTaskRequest = FastifyRequest<{
 }>;
 
 export type GetTasksRequest = FastifyRequest<{
-    Querystring: { projectGuid: string, sorting: string, filter: string };
+    Querystring: {
+        projectGuid: string;
+        sort: string;
+        status: string;
+        ascending: boolean;
+    };
 }>;
 
 export type UpdateTaskRequest = FastifyRequest<{
@@ -13,11 +18,11 @@ export type UpdateTaskRequest = FastifyRequest<{
     Body: {
         title?: string;
         description?: string;
-        dueDate?: Date;
+        dueDate?: string;
         labelId?: number;
         projectId?: number;
         priorityId?: number;
-    }
+    };
 }>;
 
 export type AddTaskRequest = FastifyRequest<{
@@ -25,11 +30,11 @@ export type AddTaskRequest = FastifyRequest<{
     Body: {
         title: string;
         description: string;
-        dueDate: Date;
+        dueDate: string;
         labelId: number;
         projectId: number;
         priorityId?: number;
-    }
+    };
 }>;
 
 export type DeleteTaskRequest = FastifyRequest<{
