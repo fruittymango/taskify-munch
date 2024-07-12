@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from "uuid";
 import "./helpers/loadEnv";
 import fastifyOptions from "./config/fastifyOptions";
@@ -20,15 +20,6 @@ import prioritiesRoutes from "./api/routes/priorities.route";
 import taskAssignRoutes from "./api/routes/task_assignments.route";
 const JWTSECRET = process.env.JWT_SECRET || uuidv4();
 
-declare module "fastify" {
-    interface FastifyRequest {
-        startTime: number;
-    }
-
-    interface FastifyInstance
-        extends FastifyJwtNamespace<{ namespace: "security" }> {}
-}
-
 const fastify = Fastify(fastifyOptions);
 fastify.register(fastifyJwt, { secret: JWTSECRET });
 fastify.register(userRoutes, { prefix: "/users" });
@@ -44,12 +35,12 @@ export const setUpRateLimiter = async () => {
         max: 100,
         timeWindow: "1 minute",
         global: true,
-        onExceeding: function (request, key) {
+        onExceeding: function (request: FastifyRequest, key) {
             request.log.warn(
                 `[Rate Limit Exceeding] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
             );
         },
-        onExceeded: function (request, key) {
+        onExceeded: function (request: FastifyRequest, key) {
             request.log.warn(
                 `[Rate Limit Exceeded] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
             );
@@ -60,7 +51,11 @@ export const setUpRateLimiter = async () => {
     });
 };
 
-fastify.setErrorHandler(function (error, request, reply) {
+fastify.setErrorHandler(function (
+    error,
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
     const logMessage = `\n${error.stack}`;
     if (
         error.statusCode == 401 ||
@@ -86,27 +81,36 @@ fastify.setErrorHandler(function (error, request, reply) {
     }
 });
 
-fastify.setNotFoundHandler(function (request, reply) {
+fastify.setNotFoundHandler(function (
+    request: FastifyRequest,
+    reply: FastifyReply
+) {
     reply.code(404).send();
 });
 
-fastify.addHook("onRequest", (request, reply, done) => {
-    request.startTime = Date.now();
-    request.log.info(
-        `[Incoming] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
-    );
-    done();
-});
+fastify.addHook(
+    "onRequest",
+    (request: FastifyRequest, reply: FastifyReply, done) => {
+        request.startTime = Date.now();
+        request.log.info(
+            `[Incoming] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
+        );
+        done();
+    }
+);
 
-fastify.addHook("onResponse", (request, reply, done) => {
-    request.log.info(
-        `[Outgoing] ${request.id} method=${request.raw.method}, url=${
-            request.raw.url
-        }, ip=${request.ip} status=${reply.statusCode}, duration=${
-            Date.now() - request.startTime
-        }ms`
-    );
-    done();
-});
+fastify.addHook(
+    "onResponse",
+    (request: FastifyRequest, reply: FastifyReply, done) => {
+        request.log.info(
+            `[Outgoing] ${request.id} method=${request.raw.method}, url=${
+                request.raw.url
+            }, ip=${request.ip} status=${reply.statusCode}, duration=${
+                Date.now() - request.startTime
+            }ms`
+        );
+        done();
+    }
+);
 
 export default fastify;
