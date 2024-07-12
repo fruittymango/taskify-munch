@@ -9,6 +9,7 @@ import {
     updateTaskByGuid,
     deleteTaskByGuid,
     getTasksByProjectGuidSortedFilter,
+    getTasksAssignedByProjectGuidSortedFilter,
 } from "../services/task.service";
 import { GetTasksRequest } from "../types/task.types";
 import { GuidPathParam } from "../types/project.types";
@@ -18,11 +19,57 @@ import sanitize from "sanitize-html";
 import { OrderItem } from "sequelize";
 
 type filterByType = {
-    statusId: number;
+    statusId?: number;
 };
 
 export class TaskController {
     static async GetTasks(request: FastifyRequest, reply: FastifyReply) {
+        const {
+            query: { projectGuid, sort, ascending, status },
+        }: GetTasksRequest = request as GetTasksRequest;
+
+        let filterBy: filterByType = {} as filterByType;
+        // Prepare filtering
+        if (status) {
+            const statusResult = await findStatusByTitle(
+                sanitize(status.toLowerCase().trim())
+            );
+            filterBy.statusId = statusResult.id;
+        }
+
+        // Prepare sorting
+        const allowedFilteringOptions: { [key: string]: string } = {
+            duedate: "dueDate",
+            priority: "priorityId",
+        };
+        let orderBy: OrderItem | undefined = undefined;
+        if (sort) {
+            let normalisedSort: string = sanitize(sort.toLowerCase().trim());
+            orderBy = [
+                allowedFilteringOptions[normalisedSort!],
+                ascending ? "ASC" : "DESC",
+            ] as OrderItem;
+        }
+        let projectTasks: Task[] = await getTasksByProjectGuidSortedFilter(
+            projectGuid,
+            filterBy,
+            orderBy
+        );
+
+        const unsanitizedTasks = projectTasks?.map((value: Task) => {
+            return {
+                ...value.dataValues,
+                title: unsanitize(value.dataValues.title),
+                description: unsanitize(value.dataValues.description || ""),
+            };
+        });
+        return reply.status(200).send(unsanitizedTasks);
+    }
+
+    static async GetTasksAssigned(
+        request: FastifyRequest,
+        reply: FastifyReply
+    ) {
         const {
             query: { projectGuid, sort, ascending, status },
         }: GetTasksRequest = request as GetTasksRequest;
@@ -38,19 +85,25 @@ export class TaskController {
         }
 
         // Prepare sorting
-        const normalisedSort: string = sanitize(sort.toLowerCase().trim());
         const allowedFilteringOptions: { [key: string]: string } = {
             duedate: "dueDate",
             priority: "priorityId",
         };
-        let projectTasks: Task[] = await getTasksByProjectGuidSortedFilter(
-            projectGuid,
-            filterBy,
-            [
-                allowedFilteringOptions[normalisedSort],
+        let orderBy: OrderItem | undefined = undefined;
+        if (sort) {
+            let normalisedSort: string = sanitize(sort.toLowerCase().trim());
+            orderBy = [
+                allowedFilteringOptions[normalisedSort!],
                 ascending ? "ASC" : "DESC",
-            ] as OrderItem
-        );
+            ] as OrderItem;
+        }
+        let projectTasks: Task[] =
+            await getTasksAssignedByProjectGuidSortedFilter(
+                projectGuid,
+                (request.user as User).id,
+                filterBy,
+                orderBy
+            );
 
         const unsanitizedTasks = projectTasks?.map((value: Task) => {
             return {

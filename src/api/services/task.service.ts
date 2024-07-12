@@ -59,16 +59,27 @@ export const deleteTaskByGuid = async (guid: string): Promise<boolean> => {
 
 export const getTasksByProjectGuidSortedFilter = async (
     projectGuid: string,
-    filterBy?: { statusId: number } | undefined,
-    orderBy?: OrderItem
+    filterBy?:
+        | { statusId?: number; "$task_assignments.userId$"?: number }
+        | undefined,
+    orderBy?: OrderItem | undefined
 ): Promise<Task[]> => {
     try {
+        let order:
+            | {
+                  [key: string]: [OrderItem[]];
+              }
+            | undefined;
+
+        if (orderBy) {
+            order = { order: [[orderBy as OrderItem]] };
+        }
         const result = await Task.findAll({
             where: {
                 "$project.guid$": projectGuid,
                 ...filterBy,
             },
-            order: [orderBy as OrderItem],
+            ...order,
             paranoid: false,
             attributes: [
                 "id",
@@ -92,6 +103,59 @@ export const getTasksByProjectGuidSortedFilter = async (
         return result;
     } catch (error) {
         throw new DatabaseRelatedError("Failed to get tasks for project.");
+    }
+};
+
+export const getTasksAssignedByProjectGuidSortedFilter = async (
+    projectGuid: string,
+    userId: number,
+    filterBy?:
+        | { statusId?: number; "$task_assignments.userId$"?: number }
+        | undefined,
+    orderBy?: OrderItem | undefined
+): Promise<Task[]> => {
+    try {
+        let order:
+            | {
+                  [key: string]: [OrderItem[]];
+              }
+            | undefined;
+
+        if (orderBy) {
+            order = { order: [[orderBy as OrderItem]] };
+        }
+        const result = await Task.findAll({
+            where: {
+                "$project.guid$": projectGuid,
+                "$task_assignments.userId$": userId,
+                ...filterBy,
+            },
+            ...order,
+            paranoid: false,
+            attributes: [
+                "id",
+                "guid",
+                "projectId",
+                "priorityId",
+                "dueDate",
+                "createdBy",
+                "statusId",
+                "title",
+                "description",
+            ],
+            include: [
+                { model: Project, as: "project" },
+                { model: TaskAssignment, as: "task_assignments" },
+            ],
+        });
+        if (!result) {
+            throw new NotFoundError("Tasks not found");
+        }
+        return result;
+    } catch (error) {
+        throw new DatabaseRelatedError(
+            "Failed to get assigned tasks for project."
+        );
     }
 };
 
