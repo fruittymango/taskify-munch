@@ -4,10 +4,17 @@ import { LabelsController } from "../controllers/labels.controller";
 import { AddLabelSchema } from "../schemas/label.schema";
 
 async function labelsRoutes(fastify: FastifyInstance) {
-  fastify.get("/", { preHandler: authMiddleware }, LabelsController.GetLabels);
+    fastify.get(
+        "/",
+        { preHandler: authMiddleware },
+        LabelsController.GetLabels
+    );
 
-  fastify.post("/",
-    { schema: AddLabelSchema, preHandler: authMiddleware }, LabelsController.AddLabel);
+    fastify.post(
+        "/",
+        { schema: AddLabelSchema, preHandler: authMiddleware },
+        LabelsController.AddLabel
+    );
 }
 
 export default labelsRoutes;
