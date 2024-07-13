@@ -46,6 +46,14 @@ To start the development server, use:
 npm run dev
 ```
 
+## Running linter
+
+To run the linter use:
+
+```bash
+npm run lint
+```
+
 ## Running Test
 
 To run all tests
@@ -132,3 +140,5 @@ With the following variables:
 3. Commit your changes (git commit -m 'Add some feature')
 4. Push to the branch (git push origin feature/your-feature)
 5. Open a Pull Request
+
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
