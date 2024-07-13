@@ -47,7 +47,7 @@ export class ProjectsController {
             description: projectInput?.description,
         });
         return reply.status(200).send({
-            ...addedProject,
+            ...addedProject.dataValues,
             title: unsanitize(addedProject.dataValues.title),
             description: unsanitize(addedProject.dataValues?.description || ""),
         });
