@@ -2,7 +2,7 @@ import Fastify, { FastifyRequest, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from "uuid";
 import "./helpers/loadEnv";
 import fastifyOptions from "./config/fastifyOptions";
-import fastifyJwt, { FastifyJwtNamespace } from "@fastify/jwt";
+import fastifyJwt from "@fastify/jwt";
 import {
     AuthError,
     BadRequestError,
@@ -35,12 +35,12 @@ export const setUpRateLimiter = async () => {
         max: 100,
         timeWindow: "1 minute",
         global: true,
-        onExceeding: function (request: FastifyRequest, key) {
+        onExceeding: function (request: FastifyRequest) {
             request.log.warn(
                 `[Rate Limit Exceeding] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
             );
         },
-        onExceeded: function (request: FastifyRequest, key) {
+        onExceeded: function (request: FastifyRequest) {
             request.log.warn(
                 `[Rate Limit Exceeded] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
             );

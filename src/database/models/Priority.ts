@@ -1,43 +1,50 @@
-import { Optional } from 'sequelize';
-import sanitizeHtml from 'sanitize-html';
+import { Optional } from "sequelize";
+import sanitizeHtml from "sanitize-html";
 
-import { Model, Table, Column, DataType, HasMany, BeforeCreate, BeforeUpdate } from 'sequelize-typescript';
+import {
+    Model,
+    Table,
+    Column,
+    DataType,
+    BeforeCreate,
+    BeforeUpdate,
+} from "sequelize-typescript";
 
 interface PriorityAttributes {
-  id: number;
-  title: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
+    id: number;
+    title: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
 }
-export interface PriorityInput extends Optional<PriorityAttributes, 'id'> { }
-export interface PriorityOuput extends Required<PriorityAttributes> { }
+export interface PriorityInput extends Optional<PriorityAttributes, "id"> {}
+export interface PriorityOuput extends Required<PriorityAttributes> {}
 
 @Table({
-  timestamps: true,
-  tableName: 'priorities',
-  paranoid: true
+    timestamps: true,
+    tableName: "priorities",
+    paranoid: true,
 })
 class Priority extends Model<PriorityAttributes, PriorityInput> {
-  @Column({
-    type: DataType.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  })
-  id!: number;
+    @Column({
+        type: DataType.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+    })
+    id!: number;
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    unique: true
-  })
-  title!: string;
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+        unique: true,
+    })
+    title!: string;
 
-  @BeforeCreate
-  @BeforeUpdate
-  static sanitizeData(instance: PriorityAttributes) {
-    instance.title = sanitizeHtml(instance.title.trim());
-  }
+    @BeforeCreate
+    @BeforeUpdate
+    static sanitizeData(instance: PriorityAttributes) {
+        instance.title = sanitizeHtml(instance.title.trim());
+    }
 }
 
-export default Priority
+export default Priority;

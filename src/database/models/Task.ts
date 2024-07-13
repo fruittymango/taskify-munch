@@ -1,4 +1,4 @@
-import { DataTypes, DateOnlyDataType, Optional } from "sequelize";
+import { DataTypes, Optional } from "sequelize";
 import {
     Model,
     DataType,

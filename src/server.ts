@@ -14,7 +14,7 @@ import {
     getAllStatuses,
 } from "./api/services/statuses.service";
 
-import fastify, { setUpRateLimiter } from "./app";
+import fastify from "./app";
 
 async function initializeDB() {
     await sequelizeConnection.authenticate();
@@ -42,7 +42,7 @@ export async function startServer() {
                 return `Task Munch server is listening at ${address}`;
             },
         },
-        function (err, address) {
+        function (err) {
             if (err) {
                 fastify.log.error(err);
                 process.exit(1);

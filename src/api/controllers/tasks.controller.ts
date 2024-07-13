@@ -41,7 +41,7 @@ async function getTasksHelper(
     }: GetTasksRequest = request as GetTasksRequest;
 
     // Prepare filtering
-    let filterBy: filterByType = {
+    const filterBy: filterByType = {
         "$project.guid$": projectGuid,
     } as filterByType;
 
@@ -63,13 +63,13 @@ async function getTasksHelper(
     };
     let orderBy: OrderItem | undefined = undefined;
     if (sort) {
-        let normalisedSort: string = sanitize(sort.toLowerCase().trim());
+        const normalisedSort: string = sanitize(sort.toLowerCase().trim());
         orderBy = [
             allowedFilteringOptions[normalisedSort!],
             ascending ? "ASC" : "DESC",
         ] as OrderItem;
     }
-    let projectTasks: Task[] = await getAvailableTasks(filterBy, orderBy);
+    const projectTasks: Task[] = await getAvailableTasks(filterBy, orderBy);
 
     const unsanitizedTasks = projectTasks?.map((value: Task) => {
         return {
@@ -159,7 +159,7 @@ export class TaskController {
         const payload: TaskInput = request.body as TaskInput;
         const updatedTask = await updateTaskByGuid(guid, {
             ...payload,
-            dueDate: payload?.dueDate!,
+            dueDate: payload?.dueDate,
         });
         return reply.status(200).send(updatedTask);
     }
