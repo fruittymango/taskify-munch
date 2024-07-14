@@ -73,13 +73,13 @@ describe("Manage tasks assignments", () => {
             send: jest.fn(),
         };
 
-        await TaskController.GetTasks(
+        await TaskController.GetTasksAssigned(
             mockGetProjectTasksRequest as any,
             mockGetProjectTasksReply as any
         );
         expect(mockGetProjectTasksReply.send).toHaveBeenCalled();
-        const task = mockGetProjectTasksReply.send.mock.calls[0][0][0];
-        expect(task.task_assignments.length).toBe(0);
+        const task = mockGetProjectTasksReply.send.mock.calls[0];
+        expect(task.length).toBe(1);
         expect(mockGetProjectTasksReply.status).toHaveBeenCalledWith(200);
     });
 
@@ -167,13 +167,13 @@ describe("Manage tasks assignments", () => {
             send: jest.fn(),
         };
 
-        await TaskController.GetTasks(
+        await TaskController.GetTasksAssigned(
             mockGetProjectTasksRequest as any,
             mockGetProjectTasksReply as any
         );
         expect(mockGetProjectTasksReply.send).toHaveBeenCalled();
-        const task = mockGetProjectTasksReply.send.mock.calls[0][0][0];
-        expect(task.task_assignments.length).toBeGreaterThan(0);
+        const task = mockGetProjectTasksReply.send.mock.calls[0];
+        expect(task.length).toBeGreaterThan(0);
         expect(mockGetProjectTasksReply.status).toHaveBeenCalledWith(200);
     });
 

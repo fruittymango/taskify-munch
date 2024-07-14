@@ -7,10 +7,16 @@ export const createTaskAssignments = async (
     payload: TaskAssignmentInput
 ): Promise<TaskAssignments> => {
     try {
-        const taskAssignment = await TaskAssignments.findOrCreate({
+        const assignmentExist = await TaskAssignments.findOne({
             where: { ...payload },
         });
-        return taskAssignment[0];
+        if (assignmentExist) {
+            throw new DatabaseRelatedError("Task has already been assigned.");
+        }
+        const taskAssignment = await TaskAssignments.create({
+            ...payload,
+        });
+        return taskAssignment;
     } catch (error) {
         throw new DatabaseRelatedError("Failed to assign to the task.");
     }
