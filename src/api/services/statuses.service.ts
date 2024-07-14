@@ -3,7 +3,9 @@ import { DatabaseRelatedError, NotFoundError } from "../../helpers/errors";
 
 export const getAllStatuses = async (): Promise<Status[]> => {
     try {
-        return Status.findAll();
+        return Status.findAll({
+            attributes: { exclude: ["createdAt", "updatedAt", "statusId"] },
+        });
     } catch (error) {
         throw new DatabaseRelatedError("Failed to get available statuses.");
     }

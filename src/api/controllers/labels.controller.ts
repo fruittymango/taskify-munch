@@ -19,8 +19,9 @@ export class LabelsController {
         const addedLabels = await createLabel({
             title: labelInput.title,
         });
-        return reply
-            .status(200)
-            .send({ ...addedLabels, title: unsanitize(addedLabels.title) });
+        return reply.status(200).send({
+            ...addedLabels.dataValues,
+            title: unsanitize(addedLabels.title),
+        });
     }
 }

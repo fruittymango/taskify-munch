@@ -41,7 +41,18 @@ export const getUserById = async (id: number): Promise<User> => {
 
 export const getAllUsers = async (): Promise<User[]> => {
     try {
-        return User.findAll({ paranoid: false });
+        return User.findAll({
+            paranoid: false,
+            attributes: {
+                exclude: [
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                    "userId",
+                    "password",
+                ],
+            },
+        });
     } catch (error) {
         throw new DatabaseRelatedError("Failed to get available users.");
     }

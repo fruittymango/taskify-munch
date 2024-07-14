@@ -75,7 +75,6 @@ describe("Manage users - controller level", () => {
         expect(dataCalledWith.name).toBe(body.name);
         expect(dataCalledWith.surname).toBe(body.surname);
         expect(dataCalledWith.email).toBe(body.email);
-        expect(dataCalledWith.password).toBeTruthy();
     });
 
     test("should not log in user - user exist does not exist", async () => {

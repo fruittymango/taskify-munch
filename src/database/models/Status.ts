@@ -1,14 +1,5 @@
 import { Optional } from "sequelize";
-import {
-    Model,
-    Table,
-    Column,
-    DataType,
-    BelongsTo,
-    BelongsToMany,
-    HasMany,
-} from "sequelize-typescript";
-import Task from "./Task";
+import { Model, Table, Column, DataType } from "sequelize-typescript";
 
 interface StatusAttributes {
     id: number;

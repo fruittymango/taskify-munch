@@ -12,7 +12,9 @@ export const createLabel = async (payload: LabelInput): Promise<Label> => {
 
 export const getAllLabels = async (): Promise<Label[]> => {
     try {
-        return Label.findAll();
+        return Label.findAll({
+            attributes: { exclude: ["createdAt", "updatedAt"] },
+        });
     } catch (error) {
         throw new DatabaseRelatedError("Failed to available labels.");
     }

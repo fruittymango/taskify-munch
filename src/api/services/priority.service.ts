@@ -3,7 +3,9 @@ import { DatabaseRelatedError, NotFoundError } from "../../helpers/errors";
 
 export const getAllPriorities = async (): Promise<Priority[]> => {
     try {
-        return await Priority.findAll();
+        return await Priority.findAll({
+            attributes: { exclude: ["createdAt", "updatedAt", "deletedAt"] },
+        });
     } catch (error) {
         throw new DatabaseRelatedError("Failed to get available priorities.");
     }

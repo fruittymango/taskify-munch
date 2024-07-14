@@ -37,12 +37,11 @@ export class UserController {
             surname,
             password: hashedPassword,
         });
-        const newUser = { guid: userCreate.guid, email, name, surname };
         return reply.status(200).send({
-            ...newUser,
-            email: unsanitize(email),
-            name: unsanitize(name),
-            surname: unsanitize(surname),
+            ...userCreate.dataValues,
+            email: unsanitize(userCreate.email),
+            name: unsanitize(userCreate.name),
+            surname: unsanitize(userCreate.surname),
         });
     }
 

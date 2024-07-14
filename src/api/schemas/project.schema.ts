@@ -13,6 +13,7 @@ export const AddProjectSchema = {
             properties: {
                 guid: { type: "string" },
                 title: { type: "string" },
+                id: { type: "number" },
                 description: { type: "string" },
             },
         },
