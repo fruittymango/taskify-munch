@@ -134,9 +134,11 @@ describe("Manage tasks - api level", () => {
                 expect(projects.data.length).toBeGreaterThan(0);
                 expect(projects.status).toBe(200);
 
-                const labels = await axios.get("http://127.0.0.1:5000/labels");
-                expect(labels.data.length).toBeGreaterThan(0);
-                expect(labels.status).toBe(200);
+                const statuses = await axios.get(
+                    "http://127.0.0.1:5000/statuses"
+                );
+                expect(statuses.data.length).toBeGreaterThan(0);
+                expect(statuses.status).toBe(200);
 
                 const priorities = await axios.get(
                     "http://127.0.0.1:5000/priorities"
@@ -151,7 +153,7 @@ describe("Manage tasks - api level", () => {
                     title: humanId(),
                     description: uuidv4(),
                     dueDate: futureDate.toISOString().split("T")[0],
-                    labelId: labels.data[0].id,
+                    statusId: statuses.data[0].id,
                     projectId: projects.data[0].id,
                     priorityId: priorities.data[0].id,
                 };

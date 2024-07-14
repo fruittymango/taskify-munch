@@ -135,9 +135,9 @@ export class TaskController {
             createdBy: user.id,
             dueDate: taskInput?.dueDate,
             title: taskInput.title,
-            labelId: taskInput.labelId,
+            labelId: taskInput?.labelId,
             projectId: taskInput.projectId,
-            statusId: taskInput?.statusId,
+            statusId: taskInput.statusId,
             priorityId: taskInput?.priorityId,
             description: taskInput?.description,
         });

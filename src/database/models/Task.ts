@@ -22,11 +22,11 @@ interface TaskAttributes {
     id: number;
     guid: string;
     title: string;
-    statusId?: number;
+    statusId: number;
     dueDate?: string;
     labelId: number;
     createdBy: number;
-    projectId: number;
+    projectId?: number;
     priorityId?: number;
     description?: string;
     createdAt?: Date;
@@ -69,6 +69,7 @@ class Task extends Model<TaskAttributes, TaskInput> {
     @ForeignKey(() => Status)
     @Column({
         type: DataType.INTEGER,
+        allowNull: false,
     })
     statusId!: number;
 
@@ -96,7 +97,6 @@ class Task extends Model<TaskAttributes, TaskInput> {
     @ForeignKey(() => Label)
     @Column({
         type: DataType.INTEGER,
-        allowNull: false,
     })
     labelId!: number;
 

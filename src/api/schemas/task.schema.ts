@@ -1,7 +1,7 @@
 export const AddTaskSchema = {
     body: {
         type: "object",
-        required: ["title", "projectId", "labelId"],
+        required: ["title", "projectId", "statusId"],
         properties: {
             title: { type: "string" },
             description: { type: "string" },
