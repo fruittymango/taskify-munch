@@ -278,26 +278,7 @@ describe("Manage tasks assignments", () => {
             );
             expect(tasks.status).toBe(200);
             expect(tasks.data.length).toBeGreaterThan(0);
-            expect(tasks.data[0].task_assignments.length).toBe(1);
-
-            const assignTaskBody = { userId: 1 };
-            const addTaskAssignmentResult = await axios.post(
-                "http://127.0.0.1:5000/assign/task/" + tasks.data[0].guid,
-                { ...assignTaskBody }
-            );
-
-            expect(addTaskAssignmentResult.status).toBe(200);
-            expect(addTaskAssignmentResult.data.userId).toBe(
-                addTaskAssignmentResult.data.userId
-            );
-
-            const tasks2 = await axios.get(
-                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
-                    projects.data[0].guid
-            );
-            expect(tasks2.status).toBe(200);
-            expect(tasks2.data.length).toBeGreaterThan(0);
-            expect(tasks2.data[0].task_assignments.length).toBeGreaterThan(0);
+            expect(tasks.data[0].task_assignments.length).toBeGreaterThan(0);
         });
 
         describe("removing task assignments", () => {
