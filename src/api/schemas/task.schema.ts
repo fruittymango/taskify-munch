@@ -1,7 +1,7 @@
 export const AddTaskSchema = {
     body: {
         type: "object",
-        required: ["title", "projectId", "statusId"],
+        required: ["title", "statusId"],
         properties: {
             title: { type: "string" },
             description: { type: "string" },
@@ -52,7 +52,6 @@ export const DeleteTaskSchema = {
 export const GetTasksSchema = {
     querystring: {
         type: "object",
-        required: ["projectGuid"],
         properties: {
             sort: { type: "string" },
             status: { type: "string" },
@@ -68,7 +67,6 @@ export const UpdateTaskSchema = {
         properties: {
             guid: { type: "string", format: "uuid" },
         },
-        required: ["guid"],
     },
     body: {
         type: "object",

@@ -19,6 +19,7 @@ export type UpdateTaskRequest = FastifyRequest<{
         title?: string;
         description?: string;
         dueDate?: string;
+        statusId?: number;
         labelId?: number;
         projectId?: number;
         priorityId?: number;
@@ -31,8 +32,9 @@ export type AddTaskRequest = FastifyRequest<{
         title: string;
         description: string;
         dueDate: string;
-        labelId: number;
-        projectId: number;
+        statusId: number;
+        labelId?: number;
+        projectId?: number;
         priorityId?: number;
     };
 }>;

@@ -68,7 +68,7 @@ describe("Manage tasks - api level", () => {
             }
         });
 
-        describe("getting tasks", () => {
+        describe("getting tasks - before creation", () => {
             test("should not get tasks - schema invalid", async () => {
                 try {
                     await axios.get("http://127.0.0.1:5000/tasks?projectGuid1");
@@ -79,7 +79,7 @@ describe("Manage tasks - api level", () => {
                 }
             });
 
-            test("should not get tasks - project and tasks do not exist", async () => {
+            test("should not get tasks - project guid does not exist", async () => {
                 try {
                     await axios.get(
                         "http://127.0.0.1:5000/tasks?projectGuid=" + uuidv4()
@@ -92,6 +92,12 @@ describe("Manage tasks - api level", () => {
                         );
                     }
                 }
+            });
+
+            test("should get tasks created by user - array empty", async () => {
+                const tasks = await axios.get("http://127.0.0.1:5000/tasks");
+                expect(tasks.status).toBe(200);
+                expect(tasks.data.length).toBe(0);
             });
         });
 
@@ -116,7 +122,42 @@ describe("Manage tasks - api level", () => {
                 }
             });
 
-            test("should add one task to first project - tasks do not exist", async () => {
+            test("should add one task without project id - tasks do not exist", async () => {
+                const statuses = await axios.get(
+                    "http://127.0.0.1:5000/statuses"
+                );
+                expect(statuses.data.length).toBeGreaterThan(0);
+                expect(statuses.status).toBe(200);
+
+                const priorities = await axios.get(
+                    "http://127.0.0.1:5000/priorities"
+                );
+                expect(priorities.data.length).toBeGreaterThan(0);
+                expect(priorities.status).toBe(200);
+
+                const today = new Date();
+                const futureDate = new Date(today);
+                futureDate.setDate(today.getDate() + 7);
+                const addTaskBody = {
+                    title: humanId(),
+                    description: uuidv4(),
+                    dueDate: futureDate.toISOString().split("T")[0],
+                    statusId: statuses.data[0].id,
+                    priorityId: priorities.data[0].id,
+                };
+
+                const addTaskResult = await axios.post(
+                    "http://127.0.0.1:5000/tasks",
+                    { ...addTaskBody }
+                );
+                expect(addTaskResult.status).toBe(200);
+                expect(addTaskResult.data.title).toBe(addTaskBody.title);
+                expect(addTaskResult.data.description).toBe(
+                    addTaskBody.description
+                );
+            });
+
+            test("should add one task to first project with a project id - tasks do not exist", async () => {
                 const addProjectBody = {
                     title: humanId(),
                     description: humanId(),
@@ -170,8 +211,39 @@ describe("Manage tasks - api level", () => {
             });
         });
 
-        describe("getting one task", () => {
-            test("should get tasks - tasks do exist", async () => {
+        describe("getting tasks - after creation", () => {
+            test("should not get tasks - schema invalid", async () => {
+                try {
+                    await axios.get("http://127.0.0.1:5000/tasks?projectGuid1");
+                } catch (error) {
+                    if (error instanceof AxiosError) {
+                        expect(error.response?.status).toBe(422);
+                    }
+                }
+            });
+
+            test("should not get tasks - project guid does not exist", async () => {
+                try {
+                    await axios.get(
+                        "http://127.0.0.1:5000/tasks?projectGuid=" + uuidv4()
+                    );
+                } catch (error: Error | AxiosError | any) {
+                    if (error instanceof AxiosError) {
+                        expect(error.response?.status).toBe(404);
+                        expect(error.response?.data.error).toBe(
+                            "Tasks do not exist."
+                        );
+                    }
+                }
+            });
+
+            test("should get tasks created by user - array not empty", async () => {
+                const tasks = await axios.get("http://127.0.0.1:5000/tasks");
+                expect(tasks.status).toBe(200);
+                expect(tasks.data.length).toBeGreaterThan(1);
+            });
+
+            test("should get tasks of a project - array not empty", async () => {
                 const projects = await axios.get(
                     "http://127.0.0.1:5000/projects"
                 );
@@ -185,7 +257,9 @@ describe("Manage tasks - api level", () => {
                 expect(result.data.length).toBeGreaterThan(0);
                 expect(result.status).toBe(200);
             });
+        });
 
+        describe("getting one task", () => {
             test("should not get one tasks - schema invalid", async () => {
                 try {
                     await axios.get(`http://127.0.0.1:5000/tasks/1`);

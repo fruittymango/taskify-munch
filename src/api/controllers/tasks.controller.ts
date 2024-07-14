@@ -41,12 +41,14 @@ async function getTasksHelper(
     }: GetTasksRequest = request as GetTasksRequest;
 
     // Prepare filtering
-    const filterBy: filterByType = {
-        "$project.guid$": projectGuid,
-    } as filterByType;
+    const filterBy: filterByType = {} as filterByType;
 
     if (returnOnlyUserTasks) {
         filterBy["$task_assignments.userId$"] = (request.user as User).id;
+    }
+
+    if (projectGuid) {
+        filterBy["$project.guid$"] = projectGuid;
     }
 
     if (status) {

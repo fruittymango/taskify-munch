@@ -76,7 +76,6 @@ class Task extends Model<TaskAttributes, TaskInput> {
     @ForeignKey(() => Project)
     @Column({
         type: DataType.INTEGER,
-        allowNull: false,
     })
     projectId!: number;
 
@@ -110,6 +109,9 @@ class Task extends Model<TaskAttributes, TaskInput> {
 
     @HasMany(() => User, "userId")
     user!: User[];
+
+    @HasMany(() => Status, "statusId")
+    status!: Status[];
 
     @HasMany(() => TaskAssignment)
     task_assignments!: TaskAssignment[];
