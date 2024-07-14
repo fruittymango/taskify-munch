@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A task management system intended to streamline and automate tasks for members of teams at munch.",
   "main": "./src/server.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "start": "ts-node ./src/server.ts",
