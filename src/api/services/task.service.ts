@@ -3,6 +3,7 @@ import Project from "../../database/models/Project";
 import TaskAssignment from "../../database/models/TaskAssignments";
 import { NotFoundError, DatabaseRelatedError } from "../../helpers/errors";
 import { OrderItem } from "sequelize";
+import { FilterTaskBy } from "../types/task.types";
 
 /**
  * Service used to add a task to the Task table.
@@ -88,13 +89,7 @@ export const deleteTaskByGuid = async (guid: string): Promise<boolean> => {
  * @returns an array of the available tasks read.
  */
 export const getAvailableTasks = async (
-    filterBy?:
-        | {
-              statusId?: number;
-              "$project.guid$": string;
-              "$task_assignments.userId$"?: number;
-          }
-        | undefined,
+    filterBy?: FilterTaskBy | undefined,
     orderBy?: OrderItem | undefined
 ): Promise<Task[]> => {
     try {

@@ -4,6 +4,13 @@ export type GetTaskRequest = FastifyRequest<{
     Querystring: { guid: string };
 }>;
 
+export type FilterTaskBy = {
+    statusId?: number;
+    "$project.guid$": string;
+    "$task_assignments.userId$"?: number;
+    createdBy?: number;
+};
+
 export type GetTasksRequest = FastifyRequest<{
     Querystring: {
         projectGuid: string;

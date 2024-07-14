@@ -10,18 +10,12 @@ import {
     deleteTaskByGuid,
     getAvailableTasks,
 } from "../services/task.service";
-import { GetTasksRequest } from "../types/task.types";
+import { FilterTaskBy, GetTasksRequest } from "../types/task.types";
 import { GuidPathParam } from "../types/project.types";
 import unsanitize from "../../utils/unsanitize";
 import { findStatusByTitle } from "../services/statuses.service";
 import sanitize from "sanitize-html";
 import { OrderItem } from "sequelize";
-
-type filterByType = {
-    statusId?: number;
-    "$project.guid$": string;
-    "$task_assignments.userId$"?: number;
-};
 
 /**
  * Function will return tasks available for a project. When the returnOnlyUserTasks flag is set
@@ -41,7 +35,7 @@ async function getTasksHelper(
     }: GetTasksRequest = request as GetTasksRequest;
 
     // Prepare filtering
-    const filterBy: filterByType = {} as filterByType;
+    const filterBy: FilterTaskBy = {} as FilterTaskBy;
 
     if (returnOnlyUserTasks) {
         filterBy["$task_assignments.userId$"] = (request.user as User).id;
@@ -49,6 +43,8 @@ async function getTasksHelper(
 
     if (projectGuid) {
         filterBy["$project.guid$"] = projectGuid;
+    } else if (!projectGuid && !returnOnlyUserTasks) {
+        filterBy.createdBy = (request.user as User).id;
     }
 
     if (status) {
