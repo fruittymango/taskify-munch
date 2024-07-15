@@ -1,4 +1,5 @@
 import Fastify, { FastifyRequest, FastifyReply } from "fastify";
+import fastifyRateLimiter from "@fastify/rate-limit";
 import { v4 as uuidv4 } from "uuid";
 import "./helpers/loadEnv";
 import fastifyOptions from "./config/fastifyOptions";
@@ -31,8 +32,8 @@ fastify.register(tasksRoutes, { prefix: "/tasks" });
 fastify.register(taskAssignRoutes, { prefix: "/assign/task" });
 
 export const setUpRateLimiter = async () => {
-    await fastify.register(import("@fastify/rate-limit"), {
-        max: 100,
+    await fastify.register(fastifyRateLimiter, {
+        max: 15,
         timeWindow: "1 minute",
         global: true,
         onExceeding: function (request: FastifyRequest) {
@@ -45,10 +46,35 @@ export const setUpRateLimiter = async () => {
                 `[Rate Limit Exceeded] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
             );
             throw new RateLimitError(
-                "You hit the rate limit. Please try again after a miniute!"
+                "You hit the rate limit for this. Please try again after a miniute!"
             );
         },
     });
+
+    fastify.setNotFoundHandler(
+        {
+            preHandler: fastify.rateLimit({
+                max: 5,
+                timeWindow: "1 minute",
+                onExceeding: function (request: FastifyRequest) {
+                    request.log.warn(
+                        `[404 Rate Limit Exceeding] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
+                    );
+                },
+                onExceeded: function (request: FastifyRequest) {
+                    request.log.warn(
+                        `[404 Rate Limit Exceeded] ${request.id} method=${request.raw.method}, url=${request.raw.url}, ip=${request.ip}`
+                    );
+                    throw new RateLimitError(
+                        "You have hit the 404 rate limit. Please consult with the support team!"
+                    );
+                },
+            }),
+        },
+        function (request: FastifyRequest, reply: FastifyReply) {
+            reply.code(404).send();
+        }
+    );
 };
 
 fastify.setErrorHandler(function (
@@ -83,13 +109,6 @@ fastify.setErrorHandler(function (
             .status(error.statusCode!)
             .send({ error: "Cannot process request right now." });
     }
-});
-
-fastify.setNotFoundHandler(function (
-    request: FastifyRequest,
-    reply: FastifyReply
-) {
-    reply.code(404).send();
 });
 
 fastify.addHook(

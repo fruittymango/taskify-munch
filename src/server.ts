@@ -14,7 +14,7 @@ import {
     getAllStatuses,
 } from "./api/services/statuses.service";
 
-import fastify from "./app";
+import fastify, { setUpRateLimiter } from "./app";
 
 async function initializeDB() {
     await sequelizeConnection.authenticate();
@@ -33,6 +33,7 @@ async function initializeDB() {
 }
 
 export async function startServer() {
+    await setUpRateLimiter();
     await initializeDB();
 
     fastify.listen(
