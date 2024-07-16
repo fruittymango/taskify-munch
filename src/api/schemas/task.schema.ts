@@ -58,6 +58,8 @@ export const GetTasksSchema = {
         properties: {
             sort: { type: "string" },
             status: { type: "string" },
+            assigned: { type: "boolean" },
+            createdBy: { type: "boolean" },
             ascending: { type: "boolean" },
             projectGuid: { type: "string", format: "uuid" },
         },

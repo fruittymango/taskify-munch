@@ -25,25 +25,23 @@ import { OrderItem } from "sequelize";
  * @param returnOnlyUserTasks Flag used to
  * @returns Filtered and/or sorted tasks depending on if the sort, ascending or status to the query parameters were used.
  */
-async function getTasksHelper(
-    request: FastifyRequest,
-    reply: FastifyReply,
-    returnOnlyUserTasks = false
-) {
+async function getTasksHelper(request: FastifyRequest, reply: FastifyReply) {
     const {
-        query: { projectGuid, sort, ascending, status },
+        query: { projectGuid, sort, ascending, status, assigned, createdBy },
     }: GetTasksRequest = request as GetTasksRequest;
 
     // Prepare filtering
     const filterBy: FilterTaskBy = {} as FilterTaskBy;
 
-    if (returnOnlyUserTasks) {
+    if (projectGuid) {
+        filterBy["$project.guid$"] = projectGuid;
+    }
+
+    if (assigned) {
         filterBy["$task_assignments.userId$"] = (request.user as User).id;
     }
 
-    if (projectGuid) {
-        filterBy["$project.guid$"] = projectGuid;
-    } else if (!projectGuid && !returnOnlyUserTasks) {
+    if (createdBy) {
         filterBy.createdBy = (request.user as User).id;
     }
 
@@ -88,19 +86,6 @@ export class TaskController {
      */
     static async GetTasks(request: FastifyRequest, reply: FastifyReply) {
         return getTasksHelper(request, reply);
-    }
-
-    /**
-     * Controller used to retrieve tasks that relates to the given project guid and authenticated user.
-     * @param request
-     * @param reply
-     * @returns status 200 and the list of task available.
-     */
-    static async GetTasksAssigned(
-        request: FastifyRequest,
-        reply: FastifyReply
-    ) {
-        return getTasksHelper(request, reply, true);
     }
 
     /**

@@ -17,6 +17,8 @@ export type GetTasksRequest = FastifyRequest<{
         sort: string;
         status: string;
         ascending: boolean;
+        assigned: boolean;
+        createdBy: boolean;
     };
 }>;
 

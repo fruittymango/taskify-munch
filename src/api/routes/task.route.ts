@@ -16,11 +16,6 @@ async function tasksRoutes(fastify: FastifyInstance) {
         { schema: GetTasksSchema, preHandler: authMiddleware },
         TaskController.GetTasks
     );
-    fastify.get(
-        "/assigned",
-        { schema: GetTasksSchema, preHandler: authMiddleware },
-        TaskController.GetTasksAssigned
-    );
     fastify.post(
         "/",
         { schema: AddTaskSchema, preHandler: authMiddleware },
