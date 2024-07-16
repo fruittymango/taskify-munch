@@ -240,7 +240,7 @@ describe("Manage tasks assignments", () => {
             expect(projects.data.length).toBeGreaterThan(0);
 
             const tasks = await axios.get(
-                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                "http://127.0.0.1:5000/tasks?assigned=true&projectGuid=" +
                     projects.data[0].guid
             );
             expect(tasks.status).toBe(200);
@@ -259,7 +259,7 @@ describe("Manage tasks assignments", () => {
             );
 
             const tasks2 = await axios.get(
-                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                "http://127.0.0.1:5000/tasks?assigned=true&projectGuid=" +
                     projects.data[0].guid
             );
             expect(tasks2.status).toBe(200);
@@ -273,7 +273,7 @@ describe("Manage tasks assignments", () => {
             expect(projects.data.length).toBeGreaterThan(0);
 
             const tasks = await axios.get(
-                "http://127.0.0.1:5000/tasks/assigned?projectGuid=" +
+                "http://127.0.0.1:5000/tasks?assigned=true&projectGuid=" +
                     projects.data[0].guid
             );
             expect(tasks.status).toBe(200);

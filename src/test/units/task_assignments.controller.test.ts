@@ -13,7 +13,6 @@ import { addBulkUsers } from "../../api/services/user.service";
 import constants from "../../database/constants";
 import { addBulkProjects } from "../../api/services/project.service";
 import { createTask } from "../../api/services/task.service";
-import { before } from "node:test";
 
 const generateNewUser = () => {
     return {
@@ -65,7 +64,7 @@ describe("Manage tasks assignments", () => {
         const mockGetProjectTasksRequest: Partial<any> = {
             body: {},
             user: { ...testingUser },
-            query: { projectGuid: testingProject.guid },
+            query: { projectGuid: testingProject.guid, assigned: true },
         };
         const mockGetProjectTasksReply: Partial<any> = {
             status: jest.fn().mockReturnThis(),
@@ -73,7 +72,7 @@ describe("Manage tasks assignments", () => {
             send: jest.fn(),
         };
 
-        await TaskController.GetTasksAssigned(
+        await TaskController.GetTasks(
             mockGetProjectTasksRequest as any,
             mockGetProjectTasksReply as any
         );
@@ -159,7 +158,7 @@ describe("Manage tasks assignments", () => {
         const mockGetProjectTasksRequest: Partial<any> = {
             body: {},
             user: { ...testingUser },
-            query: { projectGuid: testingProject.guid },
+            query: { projectGuid: testingProject.guid, assigned: true },
         };
         const mockGetProjectTasksReply: Partial<any> = {
             status: jest.fn().mockReturnThis(),
@@ -167,7 +166,7 @@ describe("Manage tasks assignments", () => {
             send: jest.fn(),
         };
 
-        await TaskController.GetTasksAssigned(
+        await TaskController.GetTasks(
             mockGetProjectTasksRequest as any,
             mockGetProjectTasksReply as any
         );
