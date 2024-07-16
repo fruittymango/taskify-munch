@@ -2,6 +2,8 @@
 
 A simple task management application built with Node.js and TypeScript.
 
+Please see: [API Documentation](https://documenter.getpostman.com/view/21279543/2sA3kPoPHC)
+
 ## Table of Contents
 
 -   [Installation](#installation)
