@@ -57,7 +57,12 @@ async function getTasksHelper(request: FastifyRequest, reply: FastifyReply) {
         duedate: "dueDate",
         priority: "priorityId",
     };
-    let orderBy: OrderItem | undefined = undefined;
+
+    let orderBy: OrderItem | undefined = [
+        "updatedAt",
+        ascending ? "ASC" : "DESC",
+    ] as OrderItem;
+
     if (sort) {
         const normalisedSort: string = sanitize(sort.toLowerCase().trim());
         orderBy = [
