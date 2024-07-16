@@ -117,6 +117,8 @@ export const getAvailableTasks = async (
                 "createdBy",
                 "statusId",
                 "title",
+                "updatedAt",
+                "deletedAt",
                 "description",
             ],
             include: [
